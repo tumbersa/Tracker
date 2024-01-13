@@ -19,7 +19,7 @@ class TRTabBarController: UITabBarController {
         tabBar.tintColor = .trBlue
         tabBar.unselectedItemTintColor = .gray
         
-        let trackerVC = TrackerVC()
+        let trackerVC = TrackersVC()
         trackerVC.title = "Трекеры"
         trackerVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         
