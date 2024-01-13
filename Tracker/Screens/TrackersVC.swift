@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackersVC: UIViewController {
+final class TrackersVC: UIViewController {
     
     let dateFormatter = DateFormatter()
         
@@ -44,8 +44,7 @@ class TrackersVC: UIViewController {
         super.viewDidLoad()
     
         configureVC()
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        configureCollectionView()
         
         if categories.isEmpty { configureEmptyState() }
     }
@@ -53,13 +52,7 @@ class TrackersVC: UIViewController {
     @objc func actionAddBarItem(){}
 
     func configureVC(){
-        categories.append(TrackerCategory(header: "Домашний уют", trackers: [Tracker(id: UUID(), name: "Поливать растения", color: .systemGreen, emoji: "❤️", schedule: [.allDays])]))
-        view.addSubview(collectionView)
-       
-        
-        
         view.backgroundColor = .systemBackground
-        collectionView.register(TRCollectionViewCell.self, forCellWithReuseIdentifier: TRCollectionViewCell.reuseID)
         
         dateFormatter.dateFormat = "dd.MM.yyyy"
         
@@ -72,6 +65,25 @@ class TrackersVC: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: getDatePicker())
     }
     
+    func configureCollectionView(){
+        categories.append(TrackerCategory(header: "Домашний уют", trackers: [
+            Tracker(id: UUID(), name: "Поливать растения", color: .systemGreen, emoji: "❤️", schedule: [.allDays]),
+            Tracker(id: UUID(), name: "Вынести мусор", color: .purple, emoji: "🙂", schedule: [.allDays])
+        ]))
+        
+        categories.append(TrackerCategory(header: "Радостные мелочи", trackers: [
+            Tracker(id: UUID(), name: "Свидания в апреле", color: .blue, emoji: "🥲", schedule: nil)
+        ]))
+        
+        view.addSubview(collectionView)
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        collectionView.register(TRCollectionViewCell.self, forCellWithReuseIdentifier: TRCollectionViewCell.reuseID)
+        collectionView.register(TRSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TRSupplementaryView.reuseID)
+       
+    }
     
     func getDatePicker() -> UIDatePicker {
         let datePicker = UIDatePicker()
@@ -115,8 +127,13 @@ class TrackersVC: UIViewController {
 }
 
 extension TrackersVC: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         categories.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        categories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -134,6 +151,7 @@ extension TrackersVC: UICollectionViewDataSource {
 
 
 extension TrackersVC: UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         9
     }
@@ -143,10 +161,31 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
         let minimumItemSpacing: CGFloat = 9
         let availavleWidth = view.frame.width - (padding * 2) - (minimumItemSpacing * 2)
         let itemWidth = availavleWidth / 2
-        return CGSize(width: itemWidth, height: itemWidth + 19)
+        
+        //167 × 148  148 / 167 = 0,89
+        return CGSize(width: itemWidth, height: itemWidth * 0.89)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+    }
+    
+    //Supplementary view
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TRSupplementaryView.reuseID, for: indexPath) as! TRSupplementaryView
+        view.set(text: categories[indexPath.section].header)
+        return view
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        let indexPath = IndexPath(item: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, 
+                                                         height: UIView.layoutFittingExpandedSize.height), 
+                                                  withHorizontalFittingPriority: .required,
+                                                  verticalFittingPriority: .fittingSizeLevel)
     }
 }

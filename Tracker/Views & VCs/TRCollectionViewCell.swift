@@ -7,13 +7,15 @@
 
 import UIKit
 
-class TRCollectionViewCell: UICollectionViewCell {
+final class TRCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "TRCell"
     
     let containerView = UIView()
     let plusButton = UIButton()
     let countDaysLabel = UILabel()
+    
+    //TODO: - поменять на image
     let emojiLabel = UILabel()
     let nameLabel = UILabel()
     
@@ -43,6 +45,8 @@ class TRCollectionViewCell: UICollectionViewCell {
         containerView.clipsToBounds = true
         nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
         nameLabel.textColor = .white
+        nameLabel.adjustsFontSizeToFitWidth = true
+        
         plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
         plusButton.tintColor = .white
         plusButton.layer.cornerRadius = 17
@@ -60,7 +64,7 @@ class TRCollectionViewCell: UICollectionViewCell {
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.heightAnchor.constraint(equalToConstant: 90),
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -58),
             
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.widthAnchor.constraint(equalToConstant: 34),
@@ -78,7 +82,7 @@ class TRCollectionViewCell: UICollectionViewCell {
             emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             
-            nameLabel.heightAnchor.constraint(equalToConstant: 34),
+            //nameLabel.heightAnchor.constraint(equalToConstant: 34),
             nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
             nameLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
