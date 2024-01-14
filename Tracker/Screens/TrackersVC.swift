@@ -7,14 +7,20 @@
 
 import UIKit
 
+protocol TRCollectionViewCellDelegate: AnyObject {
+    func plusButtonTapped(cell: TRCollectionViewCell)
+}
+
 final class TrackersVC: UIViewController {
     
-    let dateFormatter = DateFormatter()
+    private let dateFormatter = DateFormatter()
         
     
+    private var dictDays: Dictionary<DaysOfWeek.RawValue, [TrackerCategory]>  = [:]
     private var categories: [TrackerCategory]       = []
     private var completedTrackers: [TrackerRecord]  = []
-    private var completedId: Set<UUID>              = []
+    
+    private var currentDate: Date = Date()
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: view.bounds,collectionViewLayout: UICollectionViewFlowLayout())
@@ -49,7 +55,9 @@ final class TrackersVC: UIViewController {
         if categories.isEmpty { configureEmptyState() }
     }
 
-    @objc func actionAddBarItem(){}
+    @objc func actionAddBarItem(){
+        present(UINavigationController(rootViewController: TRModalChoiceVC()), animated: true)
+    }
 
     func configureVC(){
         view.backgroundColor = .systemBackground
@@ -66,13 +74,15 @@ final class TrackersVC: UIViewController {
     }
     
     func configureCollectionView(){
+        //dictDays.updateValue(, forKey:)
+        
         categories.append(TrackerCategory(header: "Домашний уют", trackers: [
-            Tracker(id: UUID(), name: "Поливать растения", color: .systemGreen, emoji: "❤️", schedule: [.allDays]),
-            Tracker(id: UUID(), name: "Вынести мусор", color: .purple, emoji: "🙂", schedule: [.allDays])
+            Tracker(id: UUID(), name: "Поливать растения", color: .systemGreen, emoji: "❤️", schedule: [.sunday]),
+            Tracker(id: UUID(), name: "Вынести мусор", color: .purple, emoji: "🙂", schedule: [.sunday])
         ]))
         
         categories.append(TrackerCategory(header: "Радостные мелочи", trackers: [
-            Tracker(id: UUID(), name: "Свидания в апреле", color: .blue, emoji: "🥲", schedule: nil)
+            Tracker(id: UUID(), name: "Свидания в апреле", color: .blue, emoji: "🥲", schedule: [.sunday])
         ]))
         
         view.addSubview(collectionView)
@@ -101,9 +111,125 @@ final class TrackersVC: UIViewController {
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        var prevDate = currentDate
+        
+        
         let selectedDate = sender.date
         let formattedDate = dateFormatter.string(from: selectedDate)
+        currentDate = selectedDate
         print("Выбранная дата: \(formattedDate)")
+        
+        let cells = collectionView.visibleCells as! [TRCollectionViewCell]
+        for cell in cells {
+            print(cell.dictDateIsMarked)
+            let isMarked = cell.dictDateIsMarked[formattedDate] ?? false
+            if isMarked {
+                cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+                cell.plusButton.alpha = 0.3
+            } else {
+                cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
+                cell.plusButton.alpha = 1
+            }
+        }
+        
+//
+//        guard let numDate = selectedDate.dayNumberOfWeek() else { return }
+//        
+//        var catCount: [Int] = []
+//        var ids: [UUID] = []
+//        
+//        var categoriesWithDel: [TrackerCategory] = []
+//        var visibleCategories: [TrackerCategory] = []
+//        categories.forEach { i in
+//            i.trackers.forEach { j in
+//                catCount.append(i.trackers.count)
+//                j.schedule?.forEach{ l in
+//                    if l.rawValue == numDate  {
+//                        visibleCategories.append(i)
+//                    }
+//                }
+//                ids.append(j.id)
+//            }
+//        }
+//        categories = visibleCategories
+//        categories = [] //del
+//        
+//        var indexesToDel: [IndexPath] = []
+//        
+//        
+//        var newCells = dictDays[numDate] ?? []
+//        
+//        var visCells = collectionView.visibleCells as! [TRCollectionViewCell]
+//        
+//        visCells.removeAll(where: { newCells.contains($0) })
+//        
+//        for cell in visCells {
+//            indexesToDel.append(collectionView.indexPath(for: cell)!)
+//        }
+//        
+//        let set = indexesToDel != [] ? IndexSet(arrayLiteral: 0,1) : []
+//        
+//        guard let keyPrev = prevDate.dayNumberOfWeek() else { return }
+//        var oldCells = dictDays[keyPrev] ?? []
+//        newCells.removeAll(where: { oldCells.contains($0) })
+//        
+//        collectionView.performBatchUpdates {
+//            collectionView.deleteItems(at: indexesToDel)
+//            collectionView.deleteSections(set)
+//        }
+        
+        
+        
+        
+        
+        
+        
+        
+//        func add(colors values: [UIColor]) {
+//            
+//            guard !values.isEmpty else { return }
+//            
+//            let count = colors.count
+//            colors = colors + values
+//                
+//            collection.performBatchUpdates {
+//                let indexes = (count..<colors.count).map { IndexPath(row: $0, section: 0) }
+//                collection.insertItems(at: indexes)
+//            }
+//        }
+        
+        
+//        visibleCategories.removeAll()
+//        
+//        var cellsToDelete: [UICollectionViewCell] = []
+//        var cellGeneral: [UICollectionViewCell] = []
+//        collectionView.visibleCells.forEach { i in
+//            let cell = i as! TRCollectionViewCell
+//           
+//            if !ids.contains(cell.id) {
+//                cellsToDelete.append(cell)
+//            } else {
+//                cellGeneral.append(cell)
+//                ids.removeAll(where: {$0 == cell.id})
+//            }
+//        }
+//        
+//        
+//        var indexPathsToDelete: [IndexPath] = []
+//        cellsToDelete.forEach { i in
+//            indexPathsToDelete.append(collectionView.indexPath(for: i)!)
+//        }
+//        
+//        var indexPathsToInsert: [IndexPath] = []
+//        categories.forEach { i in
+//             
+//        }
+//        
+//        
+//        collectionView.performBatchUpdates {
+//            collectionView.deleteItems(at: indexPathsToDelete)
+//            collectionView.insertItems(at: [])
+//        }
     }
     
     func configureEmptyState() {
@@ -141,10 +267,12 @@ extension TrackersVC: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
+        cell.delegate = self
         let trackerItem = categories[indexPath.section].trackers[indexPath.item]
         
-        cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name, countDaysText: "0 дней")
+        cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name, countDaysText: "0 дней", id : trackerItem.id)
         
+    
         return cell
     }
 }
@@ -187,5 +315,36 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
                                                          height: UIView.layoutFittingExpandedSize.height), 
                                                   withHorizontalFittingPriority: .required,
                                                   verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+
+extension TrackersVC: TRCollectionViewCellDelegate {
+    func plusButtonTapped(cell: TRCollectionViewCell) {
+        
+        guard Date() >= currentDate else { return }
+        
+        let currentStringDate = dateFormatter.string(from:  currentDate)
+        
+        var isMarked: Bool
+        isMarked = cell.dictDateIsMarked[currentStringDate] ?? false
+        if isMarked {
+            completedTrackers.removeAll(where: {$0.id == cell.id})
+            cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
+            cell.plusButton.alpha = 1
+            
+            cell.countDayRecord -= 1
+            cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(cell.countDayRecord)
+        } else {
+            completedTrackers.append(TrackerRecord(id: cell.id, date: currentDate))
+            cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            cell.plusButton.alpha = 0.3
+            
+            cell.countDayRecord += 1
+            cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(cell.countDayRecord)
+        }
+        
+        isMarked.toggle()
+        cell.dictDateIsMarked.updateValue(isMarked, forKey: currentStringDate)
     }
 }

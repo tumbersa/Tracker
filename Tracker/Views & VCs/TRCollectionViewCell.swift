@@ -11,19 +11,28 @@ final class TRCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "TRCell"
     
+   
+    
     let containerView = UIView()
     let plusButton = UIButton()
     let countDaysLabel = UILabel()
     
-    //TODO: - поменять на image
+    let containerEmojiView = UIView()
     let emojiLabel = UILabel()
     let nameLabel = UILabel()
+    
+    var id: UUID = UUID()
+    var countDayRecord = 0
+    var dictDateIsMarked: Dictionary<String, Bool> = [:]
+    
+    weak var delegate: TRCollectionViewCellDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         addSubviews(containerView, countDaysLabel, plusButton)
-        containerView.addSubviews(emojiLabel, nameLabel)
+        containerView.addSubviews(containerEmojiView, nameLabel)
+        containerEmojiView.addSubview(emojiLabel)
         configure()
     }
     
@@ -31,34 +40,51 @@ final class TRCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(backgroundColor: UIColor,emoji: String, name: String, countDaysText: String) {
+    func set(backgroundColor: UIColor,emoji: String, name: String, countDaysText: String, id: UUID) {
         plusButton.backgroundColor = backgroundColor
         containerView.backgroundColor = backgroundColor
-        
         emojiLabel.text = emoji
         nameLabel.text = name
         countDaysLabel.text = countDaysText
+        
+        self.id = id
+    }
+    
+    @objc func plusButtonTapped(){
+        DispatchQueue.main.async {
+            self.delegate?.plusButtonTapped(cell: self)
+        }
+        
     }
     
     func configure() {
+        plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
+        
         containerView.layer.cornerRadius = 16
         containerView.clipsToBounds = true
         nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
         nameLabel.textColor = .white
         nameLabel.adjustsFontSizeToFitWidth = true
-        
         plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
         plusButton.tintColor = .white
         plusButton.layer.cornerRadius = 17
         countDaysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         
+        containerEmojiView.layer.cornerRadius = 12
+        containerEmojiView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
+        containerEmojiView.clipsToBounds = true
         
+        emojiLabel.textAlignment = .center
+       
+        emojiLabel.adjustsFontSizeToFitWidth = true
+        emojiLabel.font = .systemFont(ofSize: 16, weight: .medium)
         
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        plusButton.translatesAutoresizingMaskIntoConstraints = false
-        countDaysLabel.translatesAutoresizingMaskIntoConstraints = false
-        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.translatesAutoresizingMaskIntoConstraints         = false
+        plusButton.translatesAutoresizingMaskIntoConstraints            = false
+        countDaysLabel.translatesAutoresizingMaskIntoConstraints        = false
+        containerEmojiView.translatesAutoresizingMaskIntoConstraints    = false
+        nameLabel.translatesAutoresizingMaskIntoConstraints             = false
+        emojiLabel.translatesAutoresizingMaskIntoConstraints            = false
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor),
@@ -77,12 +103,16 @@ final class TRCollectionViewCell: UICollectionViewCell {
             countDaysLabel.trailingAnchor.constraint(equalTo: plusButton.leadingAnchor, constant: 8),
             
             //ContainerView
-            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
-            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
-            emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            containerEmojiView.heightAnchor.constraint(equalToConstant: 24),
+            containerEmojiView.widthAnchor.constraint(equalToConstant: 24),
+            containerEmojiView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            containerEmojiView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             
-            //nameLabel.heightAnchor.constraint(equalToConstant: 34),
+            emojiLabel.leadingAnchor.constraint(equalTo: containerEmojiView.leadingAnchor, constant: 4),
+            emojiLabel.trailingAnchor.constraint(equalTo: containerEmojiView.trailingAnchor, constant: -4),
+            emojiLabel.topAnchor.constraint(equalTo: containerEmojiView.topAnchor, constant: 1),
+            emojiLabel.bottomAnchor.constraint(equalTo: containerEmojiView.bottomAnchor, constant: -1),
+            
             nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
             nameLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)

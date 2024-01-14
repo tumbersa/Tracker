@@ -34,7 +34,7 @@ final class TRSupplementaryView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            headerLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            headerLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             headerLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
         ])
     }
