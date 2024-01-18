@@ -55,7 +55,10 @@ final class TrackersVC: UIViewController {
     }
 
     @objc func actionAddBarItem(){
-        present(UINavigationController(rootViewController: TRModalChoiceVC()), animated: true)
+        let vcToShow = TRModalChoiceVC()
+        vcToShow.delegate = self
+        
+        present(UINavigationController(rootViewController: vcToShow), animated: true)
     }
 
     
@@ -81,8 +84,8 @@ final class TrackersVC: UIViewController {
     }
     
     func configureCollectionView(){
-       
-       updateCategories()
+    
+        updateCategories()
         
         view.addSubview(collectionView)
         
@@ -283,5 +286,34 @@ extension TrackersVC: TRCollectionViewCellDelegate {
             countDayRecord += 1
         }
         cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(countDayRecord)
+    }
+}
+
+extension TrackersVC: TRModalChoiceVCDelegate {
+    func showCreationTrackerVC(vc: UIViewController) {
+        vc.dismiss(animated: true)
+        let vc = TRModalCreationTrackerVC(state: .irregularEvent)
+        vc.delegate = self
+        present(UINavigationController(rootViewController: vc), animated: true)
+    }
+}
+
+extension TrackersVC: TRModalCreationTrackerVCDelegate {
+    func createTracker(category: TrackerCategory) {
+        var isExist = false
+        var trackers: [Tracker] = []
+        for (index, i) in allCategories.enumerated() {
+            if i.header == category.header {
+                isExist = true
+                trackers.append(contentsOf: i.trackers)
+                trackers.append(contentsOf: category.trackers)
+                allCategories[index] = TrackerCategory(header: i.header, trackers: trackers)
+            }
+        }
+        if !isExist {
+            allCategories.append(category)
+        }
+        updateCategories()
+        collectionView.reloadData()
     }
 }

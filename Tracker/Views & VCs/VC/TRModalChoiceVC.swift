@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol TRModalChoiceVCDelegate: AnyObject {
+    func showCreationTrackerVC(vc: UIViewController)
+}
+
 class TRModalChoiceVC: UIViewController {
     
+    weak var delegate: TRModalChoiceVCDelegate?
     let habitButton = UIButton()
     let irregularEventButton = UIButton()
 
@@ -26,11 +31,13 @@ class TRModalChoiceVC: UIViewController {
         habitButton.tintColor = .white
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.layer.cornerRadius = 16
+        //habitButton.addTarget(self, action: #selector(irregularEventButton), for: .touchUpInside)
         
         irregularEventButton.backgroundColor = UIColor(resource: .trBlack)
         irregularEventButton.tintColor = .white
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
         irregularEventButton.layer.cornerRadius = 16
+        irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)
         
         view.addSubviews(habitButton, irregularEventButton)
         habitButton.translatesAutoresizingMaskIntoConstraints = false
@@ -47,5 +54,9 @@ class TRModalChoiceVC: UIViewController {
             habitButton.bottomAnchor.constraint(equalTo: irregularEventButton.topAnchor, constant: -16),
             habitButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+    
+    @objc func irregularEventButtonTapped() {
+        delegate?.showCreationTrackerVC(vc: self)
     }
 }
