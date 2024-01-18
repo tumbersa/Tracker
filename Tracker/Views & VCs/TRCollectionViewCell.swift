@@ -10,9 +10,7 @@ import UIKit
 final class TRCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "TRCell"
-    
-   
-    
+
     let containerView = UIView()
     let plusButton = UIButton()
     let countDaysLabel = UILabel()
@@ -21,9 +19,7 @@ final class TRCollectionViewCell: UICollectionViewCell {
     let emojiLabel = UILabel()
     let nameLabel = UILabel()
     
-    var id: UUID = UUID()
-    var countDayRecord = 0
-    var dictDateIsMarked: Dictionary<String, Bool> = [:]
+    
     
     weak var delegate: TRCollectionViewCellDelegate?
     
@@ -40,21 +36,16 @@ final class TRCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(backgroundColor: UIColor,emoji: String, name: String, countDaysText: String, id: UUID) {
+    func set(backgroundColor: UIColor,emoji: String, name: String) {
         plusButton.backgroundColor = backgroundColor
         containerView.backgroundColor = backgroundColor
         emojiLabel.text = emoji
         nameLabel.text = name
-        countDaysLabel.text = countDaysText
         
-        self.id = id
     }
     
     @objc func plusButtonTapped(){
-        DispatchQueue.main.async {
-            self.delegate?.plusButtonTapped(cell: self)
-        }
-        
+        delegate?.plusButtonTapped(cell: self)
     }
     
     func configure() {

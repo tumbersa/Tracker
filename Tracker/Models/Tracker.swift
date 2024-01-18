@@ -12,7 +12,7 @@ struct Tracker {
     let name: String
     let color: UIColor
     let emoji: String
-    let schedule: [DaysOfWeek]?
+    let schedule: [DaysOfWeek]
 }
 
 enum DaysOfWeek: Int {
@@ -23,10 +23,9 @@ enum DaysOfWeek: Int {
     case thursday = 5
     case friday = 6
     case saturday = 7
-         
-    case allDays = 8
-    
+
     static func printDaysMessage(_ days: Int) -> String {
+        
         if days == 0 {
             return "0 дней"
         } else if days == 1 {
