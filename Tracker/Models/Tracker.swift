@@ -42,4 +42,30 @@ enum DaysOfWeek: Int {
             return "\(days) дней"
         }
     }
+    
+    static func getShortenedDays(days: [DaysOfWeek]) -> String {
+        var returnString = ""
+        for index in days.indices {
+            switch days[index] {
+            case .monday:
+                returnString += "Пн"
+            case .tuesday:
+                returnString += "Вт"
+            case .wednesday:
+                returnString += "Ср"
+            case .thursday:
+                returnString += "Чт"
+            case .friday:
+                returnString += "Пт"
+            case .saturday:
+                returnString += "Сб"
+            case .sunday:
+                returnString += "Вс"
+            }
+            if index != days.count - 1 {
+                returnString += ", "
+            }
+        }
+        return returnString
+    }
 }

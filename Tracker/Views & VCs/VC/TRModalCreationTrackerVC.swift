@@ -24,11 +24,13 @@ class TRModalCreationTrackerVC: UIViewController {
     let createButton = UIButton()
     let cancelButton = UIButton()
     
+    var schedule: [DaysOfWeek] = []
     weak var delegate: TRModalCreationTrackerVCDelegate?
     
     var state: TRModalCreationTrackerVCState
     init(state: TRModalCreationTrackerVCState) {
         self.state = state
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -45,10 +47,9 @@ class TRModalCreationTrackerVC: UIViewController {
         configureButtons()
     }
     
-
     func configureVC(){
         view.backgroundColor = .systemBackground
-        title = "Новая привычка"
+        title = state == .habit ? "Новая привычка" : "Новое нерегулярное событие"
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -82,15 +83,23 @@ class TRModalCreationTrackerVC: UIViewController {
     
     func configureTableView(){
         tableView.rowHeight = 75
-        tableView.separatorColor = .systemBackground
+        let height: CGFloat
+        if state == .irregularEvent {
+            tableView.separatorColor = .systemBackground
+            height = 75
+        } else {
+            tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            
+            height = 150
+        }
         
-        //tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+       
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: 75)
+            tableView.heightAnchor.constraint(equalToConstant: height)
         ])
     }
     
@@ -131,6 +140,9 @@ class TRModalCreationTrackerVC: UIViewController {
     
     @objc func createButtonTapped(){
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))
+        if state == .irregularEvent {
+            schedule = [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
+        }
         
         let category = TrackerCategory(
             header: cell?.detailTextLabel?.text ?? "",
@@ -139,7 +151,7 @@ class TRModalCreationTrackerVC: UIViewController {
                 name: nameTextField.text ?? "",
                 color: .orange,
                 emoji: "🫥",
-                schedule: [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
+                schedule: schedule
             )])
         dismiss(animated: true)
         delegate?.createTracker(category: category)
@@ -149,20 +161,35 @@ class TRModalCreationTrackerVC: UIViewController {
 
 extension TRModalCreationTrackerVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        state == .irregularEvent ? 1 : 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         
         cell.backgroundColor = .trGray
-        cell.layer.cornerRadius = 16
         cell.accessoryType = .disclosureIndicator
-        cell.textLabel?.text = "Категория"
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .gray
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.detailTextLabel?.text = "Домашний уют"
+        
+        if state == .irregularEvent {
+            cell.layer.cornerRadius = 16
+            cell.textLabel?.text = "Категория"
+            cell.detailTextLabel?.text = "Домашний уют"
+        } else {
+            if indexPath.row == 0 {
+                cell.textLabel?.text = "Категория"
+                cell.detailTextLabel?.text = "Домашний уют"
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            } else {
+                cell.textLabel?.text = "Расписание"
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                cell.separatorInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: CGFloat.greatestFiniteMagnitude/2.0)
+            }
+        }
         return cell
     }
     
@@ -170,6 +197,20 @@ extension TRModalCreationTrackerVC: UITableViewDataSource {
 
 extension TRModalCreationTrackerVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
+        if indexPath.row == 1 {
+            let vc = TRScheduleVC()
+            vc.schedule = self.schedule
+            vc.delegate = self
+            present(UINavigationController(rootViewController: vc) ,animated: true)
+        }
+    }
+}
+
+extension TRModalCreationTrackerVC: TRScheduleVCDelegate {
+    func passSchedule(schedule: [DaysOfWeek], secondaryString: String) {
+        self.schedule = schedule
+        let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0))
+        cell?.detailTextLabel?.text = secondaryString
+        tableView.deselectRow(at: IndexPath(row: 1, section: 0), animated: true)
     }
 }

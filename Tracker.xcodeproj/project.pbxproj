@@ -11,6 +11,8 @@
 		A422EBF52B4DBC0A00716981 /* StatsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBF42B4DBC0A00716981 /* StatsVC.swift */; };
 		A422EBF92B4DC4B800716981 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBF82B4DC4B800716981 /* Tracker.swift */; };
 		A422EBFC2B4DC7B300716981 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBFB2B4DC7B300716981 /* UIView+Ext.swift */; };
+		A425A2D62B59B4730060FDCF /* TRScheduleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A425A2D52B59B4730060FDCF /* TRScheduleVC.swift */; };
+		A425A2D82B59BA250060FDCF /* TRScheduleTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A425A2D72B59BA250060FDCF /* TRScheduleTableCell.swift */; };
 		A433C9A42B594D5800D0BCC2 /* TRModalCreationTrackerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A433C9A32B594D5800D0BCC2 /* TRModalCreationTrackerVC.swift */; };
 		A43CDEA62B4C000E002D0064 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43CDEA52B4C000E002D0064 /* AppDelegate.swift */; };
 		A43CDEA82B4C000E002D0064 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43CDEA72B4C000E002D0064 /* SceneDelegate.swift */; };
@@ -30,6 +32,8 @@
 		A422EBF42B4DBC0A00716981 /* StatsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsVC.swift; sourceTree = "<group>"; };
 		A422EBF82B4DC4B800716981 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		A422EBFB2B4DC7B300716981 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
+		A425A2D52B59B4730060FDCF /* TRScheduleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TRScheduleVC.swift; sourceTree = "<group>"; };
+		A425A2D72B59BA250060FDCF /* TRScheduleTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TRScheduleTableCell.swift; sourceTree = "<group>"; };
 		A433C9A32B594D5800D0BCC2 /* TRModalCreationTrackerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TRModalCreationTrackerVC.swift; sourceTree = "<group>"; };
 		A43CDEA22B4C000E002D0064 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A43CDEA52B4C000E002D0064 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 			children = (
 				A433C9A32B594D5800D0BCC2 /* TRModalCreationTrackerVC.swift */,
 				A45181732B52D5BB002B34C9 /* TRModalChoiceVC.swift */,
+				A425A2D52B59B4730060FDCF /* TRScheduleVC.swift */,
+				A425A2D72B59BA250060FDCF /* TRScheduleTableCell.swift */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -239,6 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A425A2D62B59B4730060FDCF /* TRScheduleVC.swift in Sources */,
 				A4D368202B528FB200BFD1EA /* TRCollectionViewCell.swift in Sources */,
 				A422EBF92B4DC4B800716981 /* Tracker.swift in Sources */,
 				A43CDEAA2B4C000E002D0064 /* TrackersVC.swift in Sources */,
@@ -253,6 +260,7 @@
 				A422EBF32B4DB9BC00716981 /* TRTabBarController.swift in Sources */,
 				A43CDEA82B4C000E002D0064 /* SceneDelegate.swift in Sources */,
 				A45181742B52D5BB002B34C9 /* TRModalChoiceVC.swift in Sources */,
+				A425A2D82B59BA250060FDCF /* TRScheduleTableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TRModalChoiceVCDelegate: AnyObject {
-    func showCreationTrackerVC(vc: UIViewController)
+    func showCreationTrackerVC(vc: UIViewController, state: TRModalCreationTrackerVCState)
 }
 
 class TRModalChoiceVC: UIViewController {
@@ -28,13 +28,11 @@ class TRModalChoiceVC: UIViewController {
         title = "Создание трекера"
         
         habitButton.backgroundColor = UIColor(resource: .trBlack)
-        habitButton.tintColor = .white
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.layer.cornerRadius = 16
-        //habitButton.addTarget(self, action: #selector(irregularEventButton), for: .touchUpInside)
+        habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
         
         irregularEventButton.backgroundColor = UIColor(resource: .trBlack)
-        irregularEventButton.tintColor = .white
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
         irregularEventButton.layer.cornerRadius = 16
         irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)
@@ -57,6 +55,10 @@ class TRModalChoiceVC: UIViewController {
     }
     
     @objc func irregularEventButtonTapped() {
-        delegate?.showCreationTrackerVC(vc: self)
+        delegate?.showCreationTrackerVC(vc: self, state: .irregularEvent)
+    }
+    
+    @objc func habitButtonTapped(){
+        delegate?.showCreationTrackerVC(vc: self, state: .habit)
     }
 }

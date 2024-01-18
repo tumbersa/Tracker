@@ -290,9 +290,9 @@ extension TrackersVC: TRCollectionViewCellDelegate {
 }
 
 extension TrackersVC: TRModalChoiceVCDelegate {
-    func showCreationTrackerVC(vc: UIViewController) {
+    func showCreationTrackerVC(vc: UIViewController, state: TRModalCreationTrackerVCState) {
         vc.dismiss(animated: true)
-        let vc = TRModalCreationTrackerVC(state: .irregularEvent)
+        let vc = TRModalCreationTrackerVC(state: state)
         vc.delegate = self
         present(UINavigationController(rootViewController: vc), animated: true)
     }
