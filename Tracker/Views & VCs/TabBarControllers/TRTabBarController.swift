@@ -15,15 +15,15 @@ final class TRTabBarController: UITabBarController {
         configure()
     }
     
-    func configure(){
+    private func configure(){
         tabBar.tintColor = .trBlue
         tabBar.unselectedItemTintColor = .gray
         
-        let trackerVC = TrackersVC()
+        let trackerVC = TrackersViewController()
         trackerVC.title = "Трекеры"
         trackerVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         
-        let statsVC = StatsVC()
+        let statsVC = StatisticsViewController()
         statsVC.tabBarItem =  UITabBarItem(title: "Статистика", image: UIImage(resource: .trTabbarItemStats), tag: 1)
         viewControllers = [UINavigationController(rootViewController: trackerVC), statsVC]
     }

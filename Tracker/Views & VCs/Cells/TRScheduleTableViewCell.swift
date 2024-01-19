@@ -7,15 +7,18 @@
 
 import UIKit
 
-class TRScheduleTableCell: UITableViewCell {
+final class TRScheduleTableViewCell: UITableViewCell {
 
-    let scheduleSwitch = UISwitch()
+    let scheduleSwitch: UISwitch = {
+        let scheduleSwitch = UISwitch()
+        scheduleSwitch.onTintColor = .trBlue
+        scheduleSwitch.translatesAutoresizingMaskIntoConstraints = false
+        return scheduleSwitch
+    }()
     
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -24,10 +27,8 @@ class TRScheduleTableCell: UITableViewCell {
         configure()
     }
     
-    func configure(){
-        scheduleSwitch.onTintColor = .trBlue
+    private func configure(){
         contentView.addSubview(scheduleSwitch)
-        scheduleSwitch.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             scheduleSwitch.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 22),

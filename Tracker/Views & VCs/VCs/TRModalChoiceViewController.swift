@@ -11,12 +11,26 @@ protocol TRModalChoiceVCDelegate: AnyObject {
     func showCreationTrackerVC(vc: UIViewController, state: TRModalCreationTrackerVCState)
 }
 
-class TRModalChoiceVC: UIViewController {
+final class TRModalChoiceViewController: UIViewController {
     
-    weak var delegate: TRModalChoiceVCDelegate?
-    let habitButton = UIButton()
-    let irregularEventButton = UIButton()
+    private let habitButton: UIButton = {
+        let habitButton = UIButton()
+        habitButton.backgroundColor = UIColor(resource: .trBlack)
+        habitButton.setTitle("Привычка", for: .normal)
+        habitButton.layer.cornerRadius = 16
+        return habitButton
+    }()
+    
+    private let irregularEventButton: UIButton = {
+        let irregularEventButton = UIButton()
+        irregularEventButton.backgroundColor = UIColor(resource: .trBlack)
+        irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
+        irregularEventButton.layer.cornerRadius = 16
+        return irregularEventButton
+    }()
 
+    weak var delegate: TRModalChoiceVCDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -24,22 +38,14 @@ class TRModalChoiceVC: UIViewController {
         configure()
     }
     
-    func configure() {
+    private func configure() {
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Создание трекера"
         
-        habitButton.backgroundColor = UIColor(resource: .trBlack)
-        habitButton.setTitle("Привычка", for: .normal)
-        habitButton.layer.cornerRadius = 16
         habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
-        
-        irregularEventButton.backgroundColor = UIColor(resource: .trBlack)
-        irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
-        irregularEventButton.layer.cornerRadius = 16
         irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)
         
         view.addSubviews(habitButton, irregularEventButton)
-        habitButton.translatesAutoresizingMaskIntoConstraints = false
-        irregularEventButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             irregularEventButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -54,11 +60,11 @@ class TRModalChoiceVC: UIViewController {
         ])
     }
     
-    @objc func irregularEventButtonTapped() {
+    @objc private func irregularEventButtonTapped() {
         delegate?.showCreationTrackerVC(vc: self, state: .irregularEvent)
     }
     
-    @objc func habitButtonTapped(){
+    @objc private func habitButtonTapped(){
         delegate?.showCreationTrackerVC(vc: self, state: .habit)
     }
 }

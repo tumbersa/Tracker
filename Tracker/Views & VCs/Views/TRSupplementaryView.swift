@@ -10,7 +10,12 @@ import UIKit
 final class TRSupplementaryView: UICollectionReusableView {
     static let reuseID = "header"
     
-    let headerLabel = UILabel()
+    private let headerLabel: UILabel = {
+        let headerLabel = UILabel()
+        headerLabel.font = .systemFont(ofSize: 19, weight: .bold)
+        headerLabel.translatesAutoresizingMaskIntoConstraints = false
+        return headerLabel
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,12 +31,9 @@ final class TRSupplementaryView: UICollectionReusableView {
         headerLabel.text = text
     }
     
-    func configure() {
-        headerLabel.font = .systemFont(ofSize: 19, weight: .bold)
-        
+    private func configure() {
         addSubview(headerLabel)
-        headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+    
         NSLayoutConstraint.activate([
             headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
             headerLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),

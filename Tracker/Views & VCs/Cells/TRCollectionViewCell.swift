@@ -9,19 +9,55 @@ import UIKit
 
 final class TRCollectionViewCell: UICollectionViewCell {
     
-    static let reuseID = "TRCell"
+    static let reuseID = "TRCollectionCell"
 
-    let containerView = UIView()
-    let plusButton = UIButton()
-    let countDaysLabel = UILabel()
+    private let containerView: UIView = {
+        let containerView = UIView()
+        containerView.layer.cornerRadius = 16
+        containerView.clipsToBounds = true
+        return containerView
+    }()
     
-    let containerEmojiView = UIView()
-    let emojiLabel = UILabel()
-    let nameLabel = UILabel()
+    private let containerEmojiView: UIView = {
+        let containerEmojiView = UIView()
+        containerEmojiView.layer.cornerRadius = 12
+        containerEmojiView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
+        containerEmojiView.clipsToBounds = true
+        return containerEmojiView
+    }()
     
+    private let emojiLabel: UILabel = {
+        let emojiLabel = UILabel()
+        emojiLabel.textAlignment = .center
+        emojiLabel.adjustsFontSizeToFitWidth = true
+        emojiLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+        return emojiLabel
+    }()
     
+    private let nameLabel: UILabel = {
+        let nameLabel = UILabel()
+        nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        nameLabel.textColor = .white
+        nameLabel.adjustsFontSizeToFitWidth = true
+        return nameLabel
+    }()
     
-    weak var delegate: TRCollectionViewCellDelegate?
+    let plusButton: UIButton = {
+        let plusButton = UIButton()
+        plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
+        plusButton.tintColor = .white
+        plusButton.layer.cornerRadius = 17
+        return plusButton
+    }()
+    
+    let countDaysLabel: UILabel = {
+        let countDaysLabel = UILabel()
+        countDaysLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        return countDaysLabel
+    }()
+    
+    weak var delegate: TrackerCollectionViewCellDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -41,7 +77,6 @@ final class TRCollectionViewCell: UICollectionViewCell {
         containerView.backgroundColor = backgroundColor
         emojiLabel.text = emoji
         nameLabel.text = name
-        
     }
     
     @objc func plusButtonTapped(){
@@ -50,32 +85,6 @@ final class TRCollectionViewCell: UICollectionViewCell {
     
     func configure() {
         plusButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
-        
-        containerView.layer.cornerRadius = 16
-        containerView.clipsToBounds = true
-        nameLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        nameLabel.textColor = .white
-        nameLabel.adjustsFontSizeToFitWidth = true
-        plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
-        plusButton.tintColor = .white
-        plusButton.layer.cornerRadius = 17
-        countDaysLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        
-        containerEmojiView.layer.cornerRadius = 12
-        containerEmojiView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
-        containerEmojiView.clipsToBounds = true
-        
-        emojiLabel.textAlignment = .center
-       
-        emojiLabel.adjustsFontSizeToFitWidth = true
-        emojiLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        
-        containerView.translatesAutoresizingMaskIntoConstraints         = false
-        plusButton.translatesAutoresizingMaskIntoConstraints            = false
-        countDaysLabel.translatesAutoresizingMaskIntoConstraints        = false
-        containerEmojiView.translatesAutoresizingMaskIntoConstraints    = false
-        nameLabel.translatesAutoresizingMaskIntoConstraints             = false
-        emojiLabel.translatesAutoresizingMaskIntoConstraints            = false
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor),
@@ -93,7 +102,7 @@ final class TRCollectionViewCell: UICollectionViewCell {
             countDaysLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             countDaysLabel.trailingAnchor.constraint(equalTo: plusButton.leadingAnchor, constant: 8),
             
-            //ContainerView
+            //containerEmojiView
             containerEmojiView.heightAnchor.constraint(equalToConstant: 24),
             containerEmojiView.widthAnchor.constraint(equalToConstant: 24),
             containerEmojiView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
@@ -108,7 +117,5 @@ final class TRCollectionViewCell: UICollectionViewCell {
             nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
             nameLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
-        
-        
     }
 }

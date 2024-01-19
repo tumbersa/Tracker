@@ -16,18 +16,55 @@ protocol TRModalCreationTrackerVCDelegate: AnyObject {
     func createTracker(category: TrackerCategory)
 }
 
-class TRModalCreationTrackerVC: UIViewController {
-    let nameTextField = UITextField()
-    let tableView = UITableView()
+final class TRCreationTrackerViewController: UIViewController {
+    private let nameTextField: UITextField = {
+        let nameTextField = UITextField()
+        nameTextField.backgroundColor = .trGray
+        nameTextField.layer.cornerRadius = 16
+        nameTextField.clearButtonMode = .whileEditing
+        
+        let spacerView = UIView(frame:CGRect(x:0, y:0, width:16, height:nameTextField.bounds.height))
+        nameTextField.leftViewMode = .always
+        nameTextField.leftView = spacerView
+        nameTextField.placeholder = "Введите название трекера"
+        return nameTextField
+    }()
     
-    let hStackView = UIStackView()
-    let createButton = UIButton()
-    let cancelButton = UIButton()
+    private let tableView = UITableView()
     
+    private let hStackView: UIStackView = {
+        let hStackView = UIStackView()
+        hStackView.axis = .horizontal
+        hStackView.spacing = 8
+        hStackView.distribution = .fillEqually
+        return hStackView
+    }()
+    
+    private let createButton: UIButton = {
+        let createButton = UIButton()
+        createButton.layer.cornerRadius = 16
+        createButton.backgroundColor = .gray
+        createButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        createButton.setTitle("Создать", for: .normal)
+        createButton.tintColor = .white
+        return createButton
+    }()
+    
+    private let cancelButton: UIButton = {
+        let cancelButton = UIButton()
+        cancelButton.layer.cornerRadius = 16
+        cancelButton.layer.borderWidth = 1
+        cancelButton.layer.borderColor = UIColor.red.cgColor
+        cancelButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitleColor(.red, for: .normal)
+        return cancelButton
+    }()
+    
+    private var state: TRModalCreationTrackerVCState
     var schedule: [DaysOfWeek] = []
     weak var delegate: TRModalCreationTrackerVCDelegate?
     
-    var state: TRModalCreationTrackerVCState
     init(state: TRModalCreationTrackerVCState) {
         self.state = state
         
@@ -47,31 +84,19 @@ class TRModalCreationTrackerVC: UIViewController {
         configureButtons()
     }
     
-    func configureVC(){
+    private func configureVC(){
         view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.titleTextAttributes = 
+        [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = state == .habit ? "Новая привычка" : "Новое нерегулярное событие"
+        
         tableView.dataSource = self
         tableView.delegate = self
-        
-        [   nameTextField,
-            tableView,
-            hStackView
-        ].forEach { subview in
-            view.addSubview(subview)
-            subview.translatesAutoresizingMaskIntoConstraints = false
-        }
-         
+        view.addSubviews(nameTextField, tableView, hStackView)
     }
     
-    func configureTextField(){
-        nameTextField.backgroundColor = .trGray
-        nameTextField.layer.cornerRadius = 16
-        
-        let spacerView = UIView(frame:CGRect(x:0, y:0, width:16, height:nameTextField.bounds.height))
-        nameTextField.leftViewMode = .always
-        nameTextField.leftView = spacerView
-        
-        nameTextField.placeholder = "Введите название трекера"
+    private func configureTextField(){
+        nameTextField.delegate = self
         
         NSLayoutConstraint.activate([
             nameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -81,7 +106,7 @@ class TRModalCreationTrackerVC: UIViewController {
         ])
     }
     
-    func configureTableView(){
+    private func configureTableView(){
         tableView.rowHeight = 75
         let height: CGFloat
         if state == .irregularEvent {
@@ -89,11 +114,8 @@ class TRModalCreationTrackerVC: UIViewController {
             height = 75
         } else {
             tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            
             height = 150
         }
-        
-       
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
@@ -103,26 +125,10 @@ class TRModalCreationTrackerVC: UIViewController {
         ])
     }
     
-    func configureButtons(){
-        
-        cancelButton.layer.cornerRadius = 16
-        cancelButton.layer.borderWidth = 1
-        cancelButton.layer.borderColor = UIColor.red.cgColor
-        cancelButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        cancelButton.setTitle("Отменить", for: .normal)
-        cancelButton.setTitleColor(.red, for: .normal)
+    private func configureButtons(){
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
-        
-        createButton.layer.cornerRadius = 16
-        createButton.backgroundColor = .gray
-        createButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        createButton.setTitle("Создать", for: .normal)
-        createButton.tintColor = .white
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
-        hStackView.axis = .horizontal
-        hStackView.spacing = 8
-        hStackView.distribution = .fillEqually
         hStackView.addArrangedSubview(cancelButton)
         hStackView.addArrangedSubview(createButton)
         
@@ -159,7 +165,7 @@ class TRModalCreationTrackerVC: UIViewController {
     }
 }
 
-extension TRModalCreationTrackerVC: UITableViewDataSource {
+extension TRCreationTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         state == .irregularEvent ? 1 : 2
     }
@@ -195,22 +201,30 @@ extension TRModalCreationTrackerVC: UITableViewDataSource {
     
 }
 
-extension TRModalCreationTrackerVC: UITableViewDelegate {
+extension TRCreationTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 1 {
-            let vc = TRScheduleVC()
+            let vc = TRScheduleViewController()
             vc.schedule = self.schedule
             vc.delegate = self
             present(UINavigationController(rootViewController: vc) ,animated: true)
+        } else {
+            tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
         }
     }
 }
 
-extension TRModalCreationTrackerVC: TRScheduleVCDelegate {
+extension TRCreationTrackerViewController: TRScheduleVCDelegate {
     func passSchedule(schedule: [DaysOfWeek], secondaryString: String) {
         self.schedule = schedule
         let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0))
         cell?.detailTextLabel?.text = secondaryString
         tableView.deselectRow(at: IndexPath(row: 1, section: 0), animated: true)
+    }
+}
+
+extension TRCreationTrackerViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
     }
 }
