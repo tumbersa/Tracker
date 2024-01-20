@@ -334,5 +334,6 @@ extension TrackersViewController: TRModalCreationTrackerVCDelegate {
         }
         updateCategories()
         collectionView.reloadData()
+        configureEmptyState(isEmpty: categories.isEmpty)
     }
 }

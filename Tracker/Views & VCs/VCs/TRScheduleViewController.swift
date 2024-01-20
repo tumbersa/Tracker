@@ -82,7 +82,7 @@ final class TRScheduleViewController: UIViewController {
         var schedule: [DaysOfWeek] = []
         for i in 0...6 {
             let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as! TRScheduleTableViewCell
-            if cell.scheduleSwitch.isOn,
+            if cell.switchIsOn(),
                let dayOfWeek = getDayOfWeek(i: i) {
                 schedule.append(dayOfWeek)
             }
@@ -126,27 +126,27 @@ extension TRScheduleViewController: UITableViewDataSource {
     private func setupCell(cell: inout TRScheduleTableViewCell, indexPath: IndexPath){
         switch indexPath.row {
         case 0:
-            if schedule.contains(.monday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.monday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Понедельник"
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         case 1:
-            if schedule.contains(.tuesday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.tuesday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Вторник"
         case 2:
-            if schedule.contains(.wednesday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.wednesday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Среда"
         case 3:
-            if schedule.contains(.thursday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.thursday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Четверг"
         case 4:
-            if schedule.contains(.friday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.friday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Пятница"
         case 5:
-            if schedule.contains(.saturday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.saturday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Суббота"
         case 6:
-            if schedule.contains(.sunday) { cell.scheduleSwitch.setOn(true, animated: true) }
+            if schedule.contains(.sunday) { cell.switchSetOn(true) }
             cell.textLabel?.text = "Воскресенье"
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]

@@ -50,6 +50,7 @@ final class TRCreationTrackerViewController: UIViewController {
         return createButton
     }()
     
+    
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.layer.cornerRadius = 16
@@ -77,7 +78,7 @@ final class TRCreationTrackerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         configureVC()
         configureTextField()
         configureTableView()
@@ -86,7 +87,7 @@ final class TRCreationTrackerViewController: UIViewController {
     
     private func configureVC(){
         view.backgroundColor = .systemBackground
-        navigationController?.navigationBar.titleTextAttributes = 
+        navigationController?.navigationBar.titleTextAttributes =
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = state == .habit ? "Новая привычка" : "Новое нерегулярное событие"
         
@@ -145,6 +146,8 @@ final class TRCreationTrackerViewController: UIViewController {
     }
     
     @objc func createButtonTapped(){
+        guard textFielsIsNotEmpty() else { return }
+        
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))
         if state == .irregularEvent {
             schedule = [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
@@ -162,6 +165,21 @@ final class TRCreationTrackerViewController: UIViewController {
         dismiss(animated: true)
         delegate?.createTracker(category: category)
         
+    }
+    
+    private func textFielsIsNotEmpty() -> Bool{
+        guard var flag = nameTextField.text?.isEmpty else { return false }
+        flag.toggle()
+        if state == .habit {
+            if let cellFlag = tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text?.isEmpty {
+                flag = flag && !cellFlag
+            } else { flag = false}
+        }
+        if let cellFlag = tableView.cellForRow(at: IndexPath(row: 0, section: 0))?.detailTextLabel?.text?.isEmpty{
+            flag = flag && !cellFlag
+        } else { flag = false }
+        
+        return flag
     }
 }
 

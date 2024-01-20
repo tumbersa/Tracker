@@ -9,7 +9,7 @@ import UIKit
 
 final class TRScheduleTableViewCell: UITableViewCell {
 
-    let scheduleSwitch: UISwitch = {
+    private let scheduleSwitch: UISwitch = {
         let scheduleSwitch = UISwitch()
         scheduleSwitch.onTintColor = .trBlue
         scheduleSwitch.translatesAutoresizingMaskIntoConstraints = false
@@ -25,6 +25,14 @@ final class TRScheduleTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         configure()
+    }
+    
+    func switchIsOn() -> Bool {
+        scheduleSwitch.isOn
+    }
+    
+    func switchSetOn(_ on: Bool){
+        scheduleSwitch.setOn(on, animated: true)
     }
     
     private func configure(){
