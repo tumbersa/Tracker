@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TRTabBarController: UITabBarController {
+final class TRTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,15 +15,15 @@ class TRTabBarController: UITabBarController {
         configure()
     }
     
-    func configure(){
+    private func configure(){
         tabBar.tintColor = .trBlue
         tabBar.unselectedItemTintColor = .gray
         
-        let trackerVC = TrackerVC()
+        let trackerVC = TrackersViewController()
         trackerVC.title = "Трекеры"
         trackerVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         
-        let statsVC = StatsVC()
+        let statsVC = StatisticsViewController()
         statsVC.tabBarItem =  UITabBarItem(title: "Статистика", image: UIImage(resource: .trTabbarItemStats), tag: 1)
         viewControllers = [UINavigationController(rootViewController: trackerVC), statsVC]
     }
