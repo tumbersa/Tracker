@@ -45,5 +45,4 @@ final class TRScheduleTableViewCell: UITableViewCell {
             scheduleSwitch.widthAnchor.constraint(equalToConstant: 51)
         ])
     }
-
 }
