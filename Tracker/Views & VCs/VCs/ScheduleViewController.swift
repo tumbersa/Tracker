@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol TRScheduleVCDelegate: AnyObject {
+protocol ScheduleVCDelegate: AnyObject {
     func passSchedule(schedule: [DaysOfWeek], secondaryString: String)
 }
 
-final class TRScheduleViewController: UIViewController {
+final class ScheduleViewController: UIViewController {
 
     private let tableView = UITableView()
     
@@ -26,7 +26,7 @@ final class TRScheduleViewController: UIViewController {
     
     var schedule: [DaysOfWeek] = []
     
-    weak var delegate: TRScheduleVCDelegate?
+    weak var delegate: ScheduleVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +81,7 @@ final class TRScheduleViewController: UIViewController {
     @objc private func readyButtonTapped(){
         var schedule: [DaysOfWeek] = []
         for i in 0...6 {
-            let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as! TRScheduleTableViewCell
+            let cell = tableView.cellForRow(at: IndexPath(row: i, section: 0)) as! ScheduleTableViewCell
             if cell.switchIsOn(),
                let dayOfWeek = getDayOfWeek(i: i) {
                 schedule.append(dayOfWeek)
@@ -106,13 +106,13 @@ final class TRScheduleViewController: UIViewController {
     }
 }
 
-extension TRScheduleViewController: UITableViewDataSource {
+extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = TRScheduleTableViewCell()
+        var cell = ScheduleTableViewCell()
         
         cell.backgroundColor = .trGray
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
@@ -123,7 +123,7 @@ extension TRScheduleViewController: UITableViewDataSource {
         return cell
     }
     
-    private func setupCell(cell: inout TRScheduleTableViewCell, indexPath: IndexPath){
+    private func setupCell(cell: inout ScheduleTableViewCell, indexPath: IndexPath){
         switch indexPath.row {
         case 0:
             if schedule.contains(.monday) { cell.switchSetOn(true) }
@@ -156,7 +156,7 @@ extension TRScheduleViewController: UITableViewDataSource {
     }
 }
 
-extension TRScheduleViewController: UITableViewDelegate {
+extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
