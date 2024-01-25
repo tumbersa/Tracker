@@ -19,8 +19,8 @@ protocol ModalCreationTrackerVCDelegate: AnyObject {
 final class CreationTrackerViewController: UIViewController {
     var (indexPathSection0, indexPathSection1): (IndexPath, IndexPath) = (IndexPath(), IndexPath())
     
-    private var selectedEmoji: String = ""
-    private var selectedColor: String = ""
+    private var selectedEmoji: String?
+    private var selectedColor: UIColor?
     
     private let nameTextField: UITextField = {
         let nameTextField = UITextField()
@@ -151,6 +151,7 @@ final class CreationTrackerViewController: UIViewController {
         iconPalleteCollectionView.register(IconPaletteEmojiCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteEmojiCollectionViewCell.reuseID)
         iconPalleteCollectionView.register(IconPaletteColorCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteColorCollectionViewCell.reuseID)
         
+        iconPalleteCollectionView.allowsMultipleSelection = true
         
         let leftPadding: CGFloat = 18
         let rightPadding: CGFloat = 19
@@ -228,13 +229,15 @@ final class CreationTrackerViewController: UIViewController {
             schedule = [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
         }
         
+        guard let selectedEmoji, let selectedColor else { return }
+        
         let category = TrackerCategory(
             header: cell?.detailTextLabel?.text ?? "",
             trackers: [Tracker(
                 id: UUID(),
                 name: nameTextField.text ?? "",
-                color: .orange,
-                emoji: "🫥",
+                color: selectedColor,
+                emoji: selectedEmoji,
                 schedule: schedule
             )])
         dismiss(animated: true)
@@ -253,6 +256,8 @@ final class CreationTrackerViewController: UIViewController {
         if let cellFlag = tableView.cellForRow(at: IndexPath(row: 0, section: 0))?.detailTextLabel?.text?.isEmpty{
             flag = flag && !cellFlag
         } else { flag = false }
+        
+        if selectedEmoji == nil || selectedColor == nil { flag = false }
         
         return flag
     }
@@ -393,44 +398,40 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
             verticalFittingPriority: .fittingSizeLevel)
     }
     
-    //TODO: - Доделать логику выделение
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath)
 
-        let indexToGet: IndexPath = indexPath.section == 1 ? indexPathSection0 : indexPath
-        guard let cell = collectionView.cellForItem(at: indexToGet) as? IconPaletteEmojiCollectionViewCell else {
-            return
-        }
-        selectedEmoji = cell.get()
-        cell.contentView.backgroundColor = .trLightGray
-        
         if indexPath.section == 0 {
-            guard let cell = collectionView.cellForItem(at: indexPathSection0) as? IconPaletteEmojiCollectionViewCell else {
+            guard let cell = collectionView.cellForItem(at: indexPath) as? IconPaletteEmojiCollectionViewCell else {
                 return
             }
+            selectedEmoji = cell.get()
+            cell.contentView.backgroundColor = .trLightGray
             
-            cell.contentView.backgroundColor = .systemBackground
+            
+            if let oldCell = collectionView.cellForItem(at: indexPathSection0) as? IconPaletteEmojiCollectionViewCell {
+                oldCell.contentView.backgroundColor = .systemBackground
+            }
+            indexPathSection0 = indexPath
+            
         } else {
             guard let cell = collectionView.cellForItem(at: indexPath) as? IconPaletteColorCollectionViewCell else {
                 return
             }
-            cell.contentView.layer.borderColor = cell.get().withAlphaComponent(0.5).cgColor
+            let color = cell.get()
+            selectedColor = color
+            cell.contentView.layer.borderColor = color.withAlphaComponent(0.5).cgColor
+            
+            
+            if let oldCell = collectionView.cellForItem(at: indexPathSection1) as? IconPaletteColorCollectionViewCell {
+                oldCell.contentView.layer.borderColor = UIColor.systemBackground.cgColor
+            }
+            indexPathSection1 = indexPath
         }
         
         
-        print(selectedEmoji)
+        print(selectedEmoji, " ", selectedColor)
     }
     
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        print(indexPath)
-        if indexPath.section == 0 {
-            
-            indexPathSection0 = indexPath
-            collectionView.cellForItem(at: indexPath)?.contentView.backgroundColor = .systemBackground
-            
-        } else {
-            
-        }
-    }
 }
 
