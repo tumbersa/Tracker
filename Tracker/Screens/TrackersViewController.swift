@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TrackerCollectionViewCellDelegate: AnyObject {
-    func plusButtonTapped(cell: TRCollectionViewCell)
+    func plusButtonTapped(cell: TrackerCollectionViewCell)
 }
 
 final class TrackersViewController: UIViewController {
@@ -105,7 +105,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func actionAddBarItem(){
-        let vcToShow = TRModalChoiceViewController()
+        let vcToShow = ModalChoiceViewController()
         vcToShow.delegate = self
         present(UINavigationController(rootViewController: vcToShow), animated: true)
     }
@@ -133,8 +133,8 @@ final class TrackersViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(TRCollectionViewCell.self, forCellWithReuseIdentifier: TRCollectionViewCell.reuseID)
-        collectionView.register(TRSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TRSupplementaryView.reuseID)
+        collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
+        collectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.reuseID)
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -196,7 +196,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TRCollectionViewCell.reuseID, for: indexPath) as? TRCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.reuseID, for: indexPath) as? TrackerCollectionViewCell else {
             return UICollectionViewCell()
         }
         
@@ -207,7 +207,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         return cell
     }
     
-    private func setInitialStateButton(cell: TRCollectionViewCell, trackerItem: Tracker){
+    private func setInitialStateButton(cell: TrackerCollectionViewCell, trackerItem: Tracker){
         var isMarked: Bool = false
         var countDayRecord = 0
         completedTrackers.forEach {
@@ -239,7 +239,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let padding: CGFloat            = 16
         let minimumItemSpacing: CGFloat = 9
-        let availavleWidth = view.frame.width - (padding * 2) - (minimumItemSpacing * 2)
+        let availavleWidth = view.frame.width - (padding * 2) - minimumItemSpacing
         let itemWidth = availavleWidth / 2
         
         //167 × 148  148 / 167 = 0,89
@@ -252,7 +252,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     //MARK: -Supplementary view
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TRSupplementaryView.reuseID, for: indexPath) as! TRSupplementaryView
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerSupplementaryView.reuseID, for: indexPath) as! TrackerSupplementaryView
         view.set(text: categories[indexPath.section].header)
         return view
     }
@@ -272,7 +272,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     
-    func plusButtonTapped(cell: TRCollectionViewCell) {
+    func plusButtonTapped(cell: TrackerCollectionViewCell) {
         
         guard Date() >= currentDate else { return }
         
@@ -308,16 +308,16 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
     }
 }
 
-extension TrackersViewController: TRModalChoiceVCDelegate {
-    func showCreationTrackerVC(vc: UIViewController, state: TRModalCreationTrackerVCState) {
+extension TrackersViewController: ModalChoiceVCDelegate {
+    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCState) {
         vc.dismiss(animated: true)
-        let vc = TRCreationTrackerViewController(state: state)
+        let vc = CreationTrackerViewController(state: state)
         vc.delegate = self
         present(UINavigationController(rootViewController: vc), animated: true)
     }
 }
 
-extension TrackersViewController: TRModalCreationTrackerVCDelegate {
+extension TrackersViewController: ModalCreationTrackerVCDelegate {
     func createTracker(category: TrackerCategory) {
         var isExist = false
         var trackers: [Tracker] = []
