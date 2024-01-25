@@ -151,7 +151,9 @@ final class CreationTrackerViewController: UIViewController {
         iconPalleteCollectionView.register(IconPaletteEmojiCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteEmojiCollectionViewCell.reuseID)
         iconPalleteCollectionView.register(IconPaletteColorCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteColorCollectionViewCell.reuseID)
         
+
         iconPalleteCollectionView.allowsMultipleSelection = true
+
         
         let leftPadding: CGFloat = 18
         let rightPadding: CGFloat = 19
@@ -398,6 +400,7 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
             verticalFittingPriority: .fittingSizeLevel)
     }
     
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath)
 
@@ -413,7 +416,6 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
                 oldCell.contentView.backgroundColor = .systemBackground
             }
             indexPathSection0 = indexPath
-            
         } else {
             guard let cell = collectionView.cellForItem(at: indexPath) as? IconPaletteColorCollectionViewCell else {
                 return
@@ -422,14 +424,11 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
             selectedColor = color
             cell.contentView.layer.borderColor = color.withAlphaComponent(0.5).cgColor
             
-            
             if let oldCell = collectionView.cellForItem(at: indexPathSection1) as? IconPaletteColorCollectionViewCell {
                 oldCell.contentView.layer.borderColor = UIColor.systemBackground.cgColor
             }
             indexPathSection1 = indexPath
         }
-        
-        
         print(selectedEmoji, " ", selectedColor)
     }
     
