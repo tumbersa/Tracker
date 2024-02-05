@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23D56" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="TrackerCategoryStore" representedClassName="TrackerCategoryStore" syncable="YES" codeGenerationType="class">
+        <attribute name="header" attributeType="String"/>
+        <relationship name="trackers" toMany="YES" deletionRule="Nullify" destinationEntity="TrackerSrore" inverseName="trackerCategory" inverseEntity="TrackerSrore"/>
+    </entity>
+    <entity name="TrackerRecordStore" representedClassName="TrackerRecordStore" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="tracker" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerSrore" inverseName="trackerRecord" inverseEntity="TrackerSrore"/>
+    </entity>
+    <entity name="TrackerSrore" representedClassName="TrackerSrore" syncable="YES" codeGenerationType="class">
+        <attribute name="colorHex" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
+        <attribute name="daysOfWeek" optional="YES" attributeType="Transformable" valueTransformerName="DaysValueTransformer"/>
+        <attribute name="emoji" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="trackerCategory" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryStore" inverseName="trackers" inverseEntity="TrackerCategoryStore"/>
+        <relationship name="trackerRecord" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerRecordStore" inverseName="tracker" inverseEntity="TrackerRecordStore"/>
+    </entity>
+</model>
