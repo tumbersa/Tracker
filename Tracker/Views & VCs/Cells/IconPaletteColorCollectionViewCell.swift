@@ -27,7 +27,7 @@ class IconPaletteColorCollectionViewCell: UICollectionViewCell {
         colorView.backgroundColor = color
     }
     
-    func get() -> UIColor {
+    func getColor() -> UIColor {
         colorView.backgroundColor ?? UIColor()
     }
     

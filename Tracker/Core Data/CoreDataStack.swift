@@ -30,9 +30,8 @@ final class CoreDataStack {
         if context.hasChanges {
             do {
                 try context.save()
-            } catch {
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            } catch let error as NSError {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         }
     }

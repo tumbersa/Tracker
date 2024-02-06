@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 enum ModalCreationTrackerVCState {
     case habit
@@ -17,7 +18,7 @@ protocol ModalCreationTrackerVCDelegate: AnyObject {
 }
 
 final class CreationTrackerViewController: UIViewController {
-    var (indexPathSection0, indexPathSection1): (IndexPath, IndexPath) = (IndexPath(), IndexPath())
+    private var (indexPathSection0, indexPathSection1): (IndexPath, IndexPath) = (IndexPath(), IndexPath())
     
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
@@ -69,16 +70,12 @@ final class CreationTrackerViewController: UIViewController {
     
     private let scrollView = UIScrollView()
     
-    private lazy var iconPalleteCollectionView: UICollectionView = {
-        let iconPalleteCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        iconPalleteCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        return iconPalleteCollectionView
-    }()
+    private let iconPalleteCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    let containerView = UIView()
-    
+    private let containerView = UIView()
     
     private var state: ModalCreationTrackerVCState
+    
     var schedule: [DaysOfWeek] = []
     weak var delegate: ModalCreationTrackerVCDelegate?
     
@@ -104,8 +101,6 @@ final class CreationTrackerViewController: UIViewController {
         configureButtons()
     }
     
-  
-    
     private func configureVC(){
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.titleTextAttributes =
@@ -114,71 +109,64 @@ final class CreationTrackerViewController: UIViewController {
     }
     
     private func configureScrollView(){
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
-        
+        view.addSubviews(scrollView)
+        scrollView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
         
         scrollView.addSubviews(containerView)
-        
-        NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            containerView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
-            
-            containerView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
-        ])
-        let heightConstraint = containerView.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
-        heightConstraint.priority = UILayoutPriority(250)
-        heightConstraint.isActive = true
+        containerView.snp.makeConstraints { make in
+            make.edges.equalTo(scrollView.contentLayoutGuide)
+            make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
+            make.height.equalTo(scrollView.frameLayoutGuide.snp.height).priority(250)
+        }
         
         containerView.addSubviews(nameTextField, tableView, hStackView)
     }
     
     private func configurePalleteCollectionView(){
-        scrollView.addSubview(iconPalleteCollectionView)
+        scrollView.addSubviews(iconPalleteCollectionView)
         
         iconPalleteCollectionView.dataSource = self
         iconPalleteCollectionView.delegate = self
+        iconPalleteCollectionView.allowsMultipleSelection = true
         
         iconPalleteCollectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.reuseID)
         iconPalleteCollectionView.register(IconPaletteEmojiCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteEmojiCollectionViewCell.reuseID)
         iconPalleteCollectionView.register(IconPaletteColorCollectionViewCell.self, forCellWithReuseIdentifier: IconPaletteColorCollectionViewCell.reuseID)
+    
+        let collectionViewHeight = itemWidth() * 6 + 2 * 34 + 4 * 24 + 16
         
-
-        iconPalleteCollectionView.allowsMultipleSelection = true
-
-        
+        iconPalleteCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(tableView.snp.bottom).offset(16)
+            make.leading.equalTo(containerView.snp.leading)
+            make.trailing.equalTo(containerView.snp.trailing)
+            make.height.equalTo(collectionViewHeight)
+        }
+    }
+    
+    private func itemWidth() -> CGFloat {
         let leftPadding: CGFloat = 18
         let rightPadding: CGFloat = 19
         let minimumItemSpacing: CGFloat = 5
         let availableWidth: CGFloat = view.frame.width - leftPadding - rightPadding - minimumItemSpacing * 5
         let itemWidth = availableWidth / 6
-        
-        let collectionViewHeight = itemWidth * 6 + 2 * 34 + 4 * 24 + 16
-        NSLayoutConstraint.activate([
-            iconPalleteCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 16),
-            iconPalleteCollectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            iconPalleteCollectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            iconPalleteCollectionView.heightAnchor.constraint(equalToConstant: collectionViewHeight)
-        ])
+        return itemWidth
     }
     
     private func configureTextField(){
         nameTextField.delegate = self
         
-        NSLayoutConstraint.activate([
-            nameTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            nameTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            nameTextField.topAnchor.constraint(equalTo:  containerView.topAnchor, constant: 24),
-            nameTextField.heightAnchor.constraint(equalToConstant: 75)
-        ])
+        nameTextField.snp.makeConstraints { make in
+            make.leading.equalTo(containerView.snp.leading).offset(16)
+            make.trailing.equalTo(containerView.snp.trailing).offset(-16)
+            make.top.equalTo(containerView.snp.top).offset(24)
+            make.height.equalTo(75)
+        }
+        
     }
     
     private func configureTableView(){
@@ -195,12 +183,12 @@ final class CreationTrackerViewController: UIViewController {
             height = 150
         }
         
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: height)
-        ])
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(nameTextField.snp.bottom).offset(24)
+            make.leading.equalTo(containerView.snp.leading).offset(16)
+            make.trailing.equalTo(containerView.snp.trailing).offset(-16)
+            make.height.equalTo(height)
+        }
     }
     
     private func configureButtons(){
@@ -210,13 +198,14 @@ final class CreationTrackerViewController: UIViewController {
         hStackView.addArrangedSubview(cancelButton)
         hStackView.addArrangedSubview(createButton)
         
-        NSLayoutConstraint.activate([
-            hStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            hStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
-            hStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -20),
-            hStackView.topAnchor.constraint(equalTo: iconPalleteCollectionView.bottomAnchor, constant: 16),
-            hStackView.heightAnchor.constraint(equalToConstant: 60)
-        ])
+        hStackView.snp.makeConstraints { make in
+            make.bottom.equalTo(containerView.snp.bottom)
+            make.leading.equalTo(containerView.snp.leading).offset(20)
+            make.trailing.equalTo(containerView.snp.trailing).offset(-20)
+            make.top.equalTo(iconPalleteCollectionView.snp.bottom).offset(16)
+            make.height.equalTo(60)
+        }
+        
     }
     
     @objc func cancelButtonTapped(){
@@ -224,7 +213,7 @@ final class CreationTrackerViewController: UIViewController {
     }
     
     @objc func createButtonTapped(){
-        guard textFielsIsNotEmpty() else { return }
+        guard fielsIsNotEmpty() else { return }
         
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))
         if state == .irregularEvent {
@@ -247,7 +236,7 @@ final class CreationTrackerViewController: UIViewController {
         
     }
     
-    private func textFielsIsNotEmpty() -> Bool{
+    private func fielsIsNotEmpty() -> Bool {
         guard var flag = nameTextField.text?.isEmpty else { return false }
         flag.toggle()
         if state == .habit {
@@ -262,6 +251,10 @@ final class CreationTrackerViewController: UIViewController {
         if selectedEmoji == nil || selectedColor == nil { flag = false }
         
         return flag
+    }
+    
+    private func changeCreateButtonColor(){
+        createButton.backgroundColor = fielsIsNotEmpty() ? .black : .gray
     }
 }
 
@@ -320,12 +313,14 @@ extension CreationTrackerViewController: ScheduleVCDelegate {
         let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0))
         cell?.detailTextLabel?.text = secondaryString
         tableView.deselectRow(at: IndexPath(row: 1, section: 0), animated: true)
+        changeCreateButtonColor()
     }
 }
 
 extension CreationTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+        changeCreateButtonColor()
+        return textField.resignFirstResponder()
     }
 }
 
@@ -368,11 +363,7 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let leftPadding: CGFloat = 18
-        let rightPadding: CGFloat = 19
-        let minimumItemSpacing: CGFloat = 5
-        let availableWidth: CGFloat = view.frame.width - leftPadding - rightPadding - minimumItemSpacing * 5
-        let itemWidth = availableWidth / 6
+        let itemWidth = itemWidth()
         
         return CGSize(width: itemWidth, height: itemWidth)
     }
@@ -402,34 +393,34 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
 
         if indexPath.section == 0 {
-            guard let cell = collectionView.cellForItem(at: indexPath) as? IconPaletteEmojiCollectionViewCell else {
-                return
-            }
-            selectedEmoji = cell.get()
+             let cell = collectionView.cellForItem(at: indexPath) as! IconPaletteEmojiCollectionViewCell
+            
+            selectedEmoji = cell.getEmoji()
             cell.contentView.backgroundColor = .trLightGray
             
             
-            if let oldCell = collectionView.cellForItem(at: indexPathSection0) as? IconPaletteEmojiCollectionViewCell {
+            if let oldCell = collectionView.cellForItem(at: indexPathSection0) as? IconPaletteEmojiCollectionViewCell,
+               oldCell.getEmoji() != cell.getEmoji(){
                 oldCell.contentView.backgroundColor = .systemBackground
             }
             indexPathSection0 = indexPath
         } else {
-            guard let cell = collectionView.cellForItem(at: indexPath) as? IconPaletteColorCollectionViewCell else {
-                return
-            }
-            let color = cell.get()
+            let cell = collectionView.cellForItem(at: indexPath) as! IconPaletteColorCollectionViewCell
+            
+            let color = cell.getColor()
             selectedColor = color
             cell.contentView.layer.borderColor = color.withAlphaComponent(0.5).cgColor
             
-            if let oldCell = collectionView.cellForItem(at: indexPathSection1) as? IconPaletteColorCollectionViewCell {
+            if let oldCell = collectionView.cellForItem(at: indexPathSection1) as? IconPaletteColorCollectionViewCell,
+               oldCell.getColor() != cell.getColor() {
                 oldCell.contentView.layer.borderColor = UIColor.systemBackground.cgColor
             }
             indexPathSection1 = indexPath
         }
-        print(selectedEmoji, " ", selectedColor)
+        
+        changeCreateButtonColor()
     }
     
 }

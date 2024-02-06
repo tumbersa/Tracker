@@ -27,7 +27,7 @@ class IconPaletteEmojiCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = emoji
     }
     
-    func get() -> String {
+    func getEmoji() -> String {
         emojiLabel.text ?? ""
     }
     
