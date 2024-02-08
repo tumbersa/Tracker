@@ -66,23 +66,37 @@ final class TrackerCategoryStore: NSObject {
         let trackersCoreData =  trackerCategory.trackers.map {
             mapper.trackerCoreData(from: $0, context: context)
         }
+        
+        let oldTrackers = (trackerCategoryCoreData.trackers?.allObjects as? [TrackerCoreData]) ?? []
         trackersCoreData.forEach {
-            trackerCategoryCoreData.addToTrackers($0)
-            $0.trackerCategory = trackerCategoryCoreData
+            let uuids: [UUID?] = oldTrackers.map{ $0.id }
+            if !uuids.contains($0.id) {
+                trackerCategoryCoreData.addToTrackers($0)
+                $0.trackerCategory = trackerCategoryCoreData
+            }
         }
     }
     
-    private func clearDB() {
+    func updateObject(trackerCategory: TrackerCategory) {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "header == %@", trackerCategory.header)
+        if let trackerCategoryCoreData = try? context.fetch(request).first {
+            updateExistingTrackerCategory(trackerCategoryCoreData: trackerCategoryCoreData, trackerCategory: trackerCategory)
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+        }
+    }
+    
+     func clearDB() {
         // create the delete request for the specified entity
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerCategoryCoreData.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         // get reference to the persistent container
-        let persistentContainer = (UIApplication.shared.delegate as! AppDelegate).persistentContaine
 
         // perform the delete
         do {
-            try persistentContainer.viewContext.execute(deleteRequest)
+            try context.execute(deleteRequest)
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
         } catch {
             print(error.localizedDescription)
         }

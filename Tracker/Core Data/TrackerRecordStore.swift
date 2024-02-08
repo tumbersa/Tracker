@@ -10,6 +10,7 @@ import CoreData
 
 final class TrackerRecordStore: NSObject {
     private let context: NSManagedObjectContext
+    private let dateFormatter = DateFormatter()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData> = {
         let request = TrackerRecordCoreData.fetchRequest()
@@ -27,6 +28,7 @@ final class TrackerRecordStore: NSObject {
     
     override init(){
         context = (UIApplication.shared.delegate as! AppDelegate).persistentContaine.viewContext
+        dateFormatter.dateFormat = "dd.MM.yy"
     }
     
     var trackerRecords: [TrackerRecord] {
@@ -53,9 +55,12 @@ final class TrackerRecordStore: NSObject {
     
     func deleteTrackerRecord(trackerRecord: TrackerRecord){
         let request = TrackerRecordCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@ AND date == %@", trackerRecord.id as CVarArg, trackerRecord.date as CVarArg)
-        if let trackerRecordCoreData = (try? context.fetch(request))?.first {
-            context.delete(trackerRecordCoreData)
+        request.predicate = NSPredicate(format: "id == %@", trackerRecord.id as CVarArg)
+        (try? context.fetch(request))?.forEach { trackerRecordCoreData in
+            if let trackerRecordCoreDataDate = trackerRecordCoreData.date,
+                dateFormatter.string(from: trackerRecordCoreDataDate) == dateFormatter.string(from: trackerRecord.date){
+                context.delete(trackerRecordCoreData)
+            }
         }
         (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
     }
@@ -66,11 +71,12 @@ final class TrackerRecordStore: NSObject {
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         // get reference to the persistent container
-        let persistentContainer = (UIApplication.shared.delegate as! AppDelegate).persistentContaine
+        
 
         // perform the delete
         do {
-            try persistentContainer.viewContext.execute(deleteRequest)
+            try context.execute(deleteRequest)
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
         } catch {
             print(error.localizedDescription)
         }

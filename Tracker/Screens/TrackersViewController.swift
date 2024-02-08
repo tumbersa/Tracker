@@ -14,6 +14,7 @@ protocol TrackerCollectionViewCellDelegate: AnyObject {
 final class TrackersViewController: UIViewController {
     private let dateFormatter = DateFormatter()
     private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
     
     private var allCategories: [TrackerCategory] = []
     private var categories: [TrackerCategory] = []
@@ -113,9 +114,12 @@ final class TrackersViewController: UIViewController {
 
     
     private func configureVC(){
+        //trackerCategoryStore.clearDB()
         //trackerCategoryStore.addNewTrackerCategory(MockData.category)
+        
         allCategories = trackerCategoryStore.categories
-
+        completedTrackers = trackerRecordStore.trackerRecords
+        
         view.backgroundColor = .systemBackground
         dateFormatter.dateFormat = "dd.MM.yy"
     
@@ -295,13 +299,17 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         }
         
         if isMarked {
+            trackerRecordStore.deleteTrackerRecord(
+                trackerRecord: TrackerRecord(id: trackerItem.id, date: currentDate))
             completedTrackers.removeAll(where: {$0.id == trackerItem.id && currentDateString == dateFormatter.string(from: $0.date)})
             cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
             cell.plusButton.alpha = 1
             
             countDayRecord -= 1
         } else {
-            completedTrackers.append(TrackerRecord(id: trackerItem.id, date: currentDate))
+            let newTrackerRecord = TrackerRecord(id: trackerItem.id, date: currentDate)
+            trackerRecordStore.addTrackerRecord(trackerRecord: newTrackerRecord)
+            completedTrackers.append(newTrackerRecord)
             cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
             cell.plusButton.alpha = 0.3
             
@@ -329,8 +337,10 @@ extension TrackersViewController: ModalCreationTrackerVCDelegate {
                 isExist = true
                 trackers.append(contentsOf: i.trackers)
                 trackers.append(contentsOf: category.trackers)
-                //TODO: - вставить в бд (обновить)
-                allCategories[index] = TrackerCategory(header: i.header, trackers: trackers)
+                
+                let trackerCategory = TrackerCategory(header: i.header, trackers: trackers)
+                trackerCategoryStore.updateObject(trackerCategory: trackerCategory)
+                allCategories[index] = trackerCategory
             }
         }
         if !isExist {
