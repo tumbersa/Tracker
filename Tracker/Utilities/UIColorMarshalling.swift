@@ -7,8 +7,8 @@
 
 import UIKit
 
-final class UIColorMarshalling {
-    func hexToUIColor(hex: String) -> UIColor {
+enum UIColorMarshalling {
+    static func hexToUIColor(hex: String) -> UIColor {
         let alpha: CGFloat = 1
         
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -24,7 +24,7 @@ final class UIColorMarshalling {
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
     
-    func UIColorToHex(color: UIColor, alpha: Bool = false) -> String {
+    static func UIColorToHex(color: UIColor, alpha: Bool = false) -> String {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         color.getRed(&r, green: &g, blue: &b, alpha: &a)
         

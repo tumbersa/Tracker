@@ -393,7 +393,7 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
+        
         if indexPath.section == 0 {
              let cell = collectionView.cellForItem(at: indexPath) as! IconPaletteEmojiCollectionViewCell
             
@@ -404,6 +404,7 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
             if let oldCell = collectionView.cellForItem(at: indexPathSection0) as? IconPaletteEmojiCollectionViewCell,
                oldCell.getEmoji() != cell.getEmoji(){
                 oldCell.contentView.backgroundColor = .systemBackground
+                iconPalleteCollectionView.deselectItem(at: indexPathSection0, animated: true)
             }
             indexPathSection0 = indexPath
         } else {
@@ -416,6 +417,7 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
             if let oldCell = collectionView.cellForItem(at: indexPathSection1) as? IconPaletteColorCollectionViewCell,
                oldCell.getColor() != cell.getColor() {
                 oldCell.contentView.layer.borderColor = UIColor.systemBackground.cgColor
+                iconPalleteCollectionView.deselectItem(at: indexPathSection1, animated: true)
             }
             indexPathSection1 = indexPath
         }

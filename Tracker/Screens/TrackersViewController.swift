@@ -13,7 +13,8 @@ protocol TrackerCollectionViewCellDelegate: AnyObject {
 
 final class TrackersViewController: UIViewController {
     private let dateFormatter = DateFormatter()
-        
+    private let trackerCategoryStore = TrackerCategoryStore()
+    
     private var allCategories: [TrackerCategory] = []
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -112,7 +113,9 @@ final class TrackersViewController: UIViewController {
 
     
     private func configureVC(){
-        allCategories.append( MockData.category)
+        //trackerCategoryStore.addNewTrackerCategory(MockData.category)
+        allCategories = trackerCategoryStore.categories
+
         view.backgroundColor = .systemBackground
         dateFormatter.dateFormat = "dd.MM.yy"
     
@@ -326,10 +329,12 @@ extension TrackersViewController: ModalCreationTrackerVCDelegate {
                 isExist = true
                 trackers.append(contentsOf: i.trackers)
                 trackers.append(contentsOf: category.trackers)
+                //TODO: - вставить в бд (обновить)
                 allCategories[index] = TrackerCategory(header: i.header, trackers: trackers)
             }
         }
         if !isExist {
+            trackerCategoryStore.addNewTrackerCategory(category)
             allCategories.append(category)
         }
         updateCategories()

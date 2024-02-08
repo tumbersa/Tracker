@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22,15 +22,15 @@
 		A451761B2B665A050036C113 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A45176192B665A050036C113 /* Model.xcdatamodeld */; };
 		A451761F2B665CDE0036C113 /* DaysValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A451761E2B665CDE0036C113 /* DaysValueTransformer.swift */; };
 		A45181742B52D5BB002B34C9 /* ModalChoiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45181732B52D5BB002B34C9 /* ModalChoiceViewController.swift */; };
-		A45697222B694A4A008E9C9C /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45697212B694A4A008E9C9C /* CoreDataStack.swift */; };
+		A4534EB92B735EA4001269E5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4534EB82B735EA4001269E5 /* SnapKit */; };
 		A45839032B5329260066E02A /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45839022B5329260066E02A /* Date+Ext.swift */; };
 		A461054C2B624B9100E92C61 /* IconPaletteResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A461054B2B624B9100E92C61 /* IconPaletteResources.swift */; };
-		A479C0302B72D08500367EFF /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A479C02F2B72D08500367EFF /* SnapKit */; };
-		A479C0322B72D08500367EFF /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = A479C0312B72D08500367EFF /* SnapKit-Dynamic */; };
+		A48E70502B74E28A002F6EEE /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48E704F2B74E28A002F6EEE /* TrackerStore.swift */; };
+		A48E70522B74E2D0002F6EEE /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48E70512B74E2D0002F6EEE /* TrackerCategoryStore.swift */; };
+		A48E70542B74E355002F6EEE /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A48E70532B74E355002F6EEE /* TrackerRecordStore.swift */; };
 		A4A05ADC2B5ADDEA00809D16 /* DaysOfWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A05ADB2B5ADDEA00809D16 /* DaysOfWeek.swift */; };
 		A4A05ADE2B5AE0A600809D16 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A05ADD2B5AE0A600809D16 /* MockData.swift */; };
 		A4A111702B625F4E0080B57A /* IconPalleteCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A1116F2B625F4E0080B57A /* IconPalleteCollectionViewCell.swift */; };
-		A4BE1E372B6FAB0000861B42 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BE1E362B6FAB0000861B42 /* Store.swift */; };
 		A4BE1E392B6FAB6A00861B42 /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BE1E382B6FAB6A00861B42 /* UIColorMarshalling.swift */; };
 		A4D368202B528FB200BFD1EA /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D3681F2B528FB200BFD1EA /* TrackerCollectionViewCell.swift */; };
 		A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */; };
@@ -57,13 +57,14 @@
 		A451761A2B665A050036C113 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		A451761E2B665CDE0036C113 /* DaysValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysValueTransformer.swift; sourceTree = "<group>"; };
 		A45181732B52D5BB002B34C9 /* ModalChoiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalChoiceViewController.swift; sourceTree = "<group>"; };
-		A45697212B694A4A008E9C9C /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		A45839022B5329260066E02A /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		A461054B2B624B9100E92C61 /* IconPaletteResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPaletteResources.swift; sourceTree = "<group>"; };
+		A48E704F2B74E28A002F6EEE /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
+		A48E70512B74E2D0002F6EEE /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
+		A48E70532B74E355002F6EEE /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
 		A4A05ADB2B5ADDEA00809D16 /* DaysOfWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysOfWeek.swift; sourceTree = "<group>"; };
 		A4A05ADD2B5AE0A600809D16 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		A4A1116F2B625F4E0080B57A /* IconPalleteCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPalleteCollectionViewCell.swift; sourceTree = "<group>"; };
-		A4BE1E362B6FAB0000861B42 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		A4BE1E382B6FAB6A00861B42 /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		A4D3681F2B528FB200BFD1EA /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSupplementaryView.swift; sourceTree = "<group>"; };
@@ -77,8 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A479C0302B72D08500367EFF /* SnapKit in Frameworks */,
-				A479C0322B72D08500367EFF /* SnapKit-Dynamic in Frameworks */,
+				A4534EB92B735EA4001269E5 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,8 +210,9 @@
 			isa = PBXGroup;
 			children = (
 				A45176192B665A050036C113 /* Model.xcdatamodeld */,
-				A45697212B694A4A008E9C9C /* CoreDataStack.swift */,
-				A4BE1E362B6FAB0000861B42 /* Store.swift */,
+				A48E704F2B74E28A002F6EEE /* TrackerStore.swift */,
+				A48E70512B74E2D0002F6EEE /* TrackerCategoryStore.swift */,
+				A48E70532B74E355002F6EEE /* TrackerRecordStore.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -242,8 +243,7 @@
 			);
 			name = Tracker;
 			packageProductDependencies = (
-				A479C02F2B72D08500367EFF /* SnapKit */,
-				A479C0312B72D08500367EFF /* SnapKit-Dynamic */,
+				A4534EB82B735EA4001269E5 /* SnapKit */,
 			);
 			productName = Tracker;
 			productReference = A43CDEA22B4C000E002D0064 /* Tracker.app */;
@@ -265,7 +265,7 @@
 				};
 			};
 			buildConfigurationList = A43CDE9D2B4C000E002D0064 /* Build configuration list for PBXProject "Tracker" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -274,7 +274,7 @@
 			);
 			mainGroup = A43CDE992B4C000E002D0064;
 			packageReferences = (
-				A479C02E2B72D08500367EFF /* XCRemoteSwiftPackageReference "SnapKit" */,
+				A4534EB72B735EA4001269E5 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = A43CDEA32B4C000E002D0064 /* Products */;
 			projectDirPath = "";
@@ -307,23 +307,24 @@
 				A422EBF92B4DC4B800716981 /* Tracker.swift in Sources */,
 				A43CDEAA2B4C000E002D0064 /* TrackersViewController.swift in Sources */,
 				A4E9D5292B4FCFF1002FCDDC /* TrackerCategory.swift in Sources */,
-				A4BE1E372B6FAB0000861B42 /* Store.swift in Sources */,
 				A4A111702B625F4E0080B57A /* IconPalleteCollectionViewCell.swift in Sources */,
 				A45839032B5329260066E02A /* Date+Ext.swift in Sources */,
 				A422EBFC2B4DC7B300716981 /* UIView+Ext.swift in Sources */,
+				A48E70522B74E2D0002F6EEE /* TrackerCategoryStore.swift in Sources */,
 				A4A05ADC2B5ADDEA00809D16 /* DaysOfWeek.swift in Sources */,
 				A451761B2B665A050036C113 /* Model.xcdatamodeld in Sources */,
 				A451761F2B665CDE0036C113 /* DaysValueTransformer.swift in Sources */,
 				A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */,
 				A422EBF52B4DBC0A00716981 /* StatisticsViewController.swift in Sources */,
 				A4E9D52B2B4FD010002FCDDC /* TrackerRecord.swift in Sources */,
+				A48E70502B74E28A002F6EEE /* TrackerStore.swift in Sources */,
 				A43CDEA62B4C000E002D0064 /* AppDelegate.swift in Sources */,
-				A45697222B694A4A008E9C9C /* CoreDataStack.swift in Sources */,
 				A433C9A42B594D5800D0BCC2 /* CreationTrackerViewController.swift in Sources */,
 				A4A05ADE2B5AE0A600809D16 /* MockData.swift in Sources */,
 				A422EBF32B4DB9BC00716981 /* TabBarController.swift in Sources */,
 				A4BE1E392B6FAB6A00861B42 /* UIColorMarshalling.swift in Sources */,
 				A43CDEA82B4C000E002D0064 /* SceneDelegate.swift in Sources */,
+				A48E70542B74E355002F6EEE /* TrackerRecordStore.swift in Sources */,
 				A45181742B52D5BB002B34C9 /* ModalChoiceViewController.swift in Sources */,
 				A4DC7E5A2B628D8300FC6DD4 /* IconPaletteColorCollectionViewCell.swift in Sources */,
 				A461054C2B624B9100E92C61 /* IconPaletteResources.swift in Sources */,
@@ -552,26 +553,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		A479C02E2B72D08500367EFF /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		A4534EB72B735EA4001269E5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.0;
+				kind = exactVersion;
+				version = 5.6.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A479C02F2B72D08500367EFF /* SnapKit */ = {
+		A4534EB82B735EA4001269E5 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A479C02E2B72D08500367EFF /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = A4534EB72B735EA4001269E5 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		A479C0312B72D08500367EFF /* SnapKit-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A479C02E2B72D08500367EFF /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 
