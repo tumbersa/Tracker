@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DaysOfWeek: Int {
+enum DaysOfWeek: Int, Codable {
     case sunday = 1
     case monday = 2
     case tuesday = 3
@@ -61,3 +61,4 @@ enum DaysOfWeek: Int {
         return returnString
     }
 }
+

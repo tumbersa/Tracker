@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class TRCollectionViewCell: UICollectionViewCell {
+final class TrackerCollectionViewCell: UICollectionViewCell {
     
-    static let reuseID = "TRCollectionCell"
+    static let reuseID = "TrackerCollectionCell"
 
     private let containerView: UIView = {
         let containerView = UIView()
