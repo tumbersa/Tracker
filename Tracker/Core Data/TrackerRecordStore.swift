@@ -27,7 +27,7 @@ final class TrackerRecordStore: NSObject {
     }()
     
     override init(){
-        context = (UIApplication.shared.delegate as! AppDelegate).persistentContaine.viewContext
+        context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         dateFormatter.dateFormat = "dd.MM.yy"
     }
     

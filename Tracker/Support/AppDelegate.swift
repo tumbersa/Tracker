@@ -34,11 +34,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     //MARK: - Core Data
-    lazy var persistentContaine: NSPersistentContainer = {
+    lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Model")
         container.loadPersistentStores { storeDescription, error in
             if let error = error as? NSError {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                assertionFailure("Unresolved error \(error), \(error.userInfo)")
             }
         }
         return container
@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } catch {
                 context.rollback()
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }

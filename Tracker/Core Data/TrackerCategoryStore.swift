@@ -27,7 +27,7 @@ final class TrackerCategoryStore: NSObject {
     }()
     
     override init() {
-        context = (UIApplication.shared.delegate as! AppDelegate).persistentContaine.viewContext
+        context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         mapper = TrackerStore()
         super.init()
     }
