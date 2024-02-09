@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol TRModalChoiceVCDelegate: AnyObject {
-    func showCreationTrackerVC(vc: UIViewController, state: TRModalCreationTrackerVCState)
+protocol ModalChoiceVCDelegate: AnyObject {
+    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCState)
 }
 
-final class TRModalChoiceViewController: UIViewController {
+final class ModalChoiceViewController: UIViewController {
     
     private let habitButton: UIButton = {
         let habitButton = UIButton()
@@ -29,7 +29,7 @@ final class TRModalChoiceViewController: UIViewController {
         return irregularEventButton
     }()
 
-    weak var delegate: TRModalChoiceVCDelegate?
+    weak var delegate: ModalChoiceVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()

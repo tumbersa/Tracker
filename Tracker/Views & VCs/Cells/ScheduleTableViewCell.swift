@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TRScheduleTableViewCell: UITableViewCell {
+final class ScheduleTableViewCell: UITableViewCell {
 
     private let scheduleSwitch: UISwitch = {
         let scheduleSwitch = UISwitch()
