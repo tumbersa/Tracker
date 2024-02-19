@@ -9,10 +9,27 @@ import UIKit
 
 final class TabBarController: UITabBarController {
 
+    private var childViewController: UIViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configure()
+        
+        if UserDefaults.isFirstLaunch() {
+            let childViewController = TrackerPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            addChild(childViewController)
+            view.addSubview(childViewController.view)
+            childViewController.view.frame = view.frame
+            childViewController.didMove(toParent: self)
+            self.childViewController = childViewController
+        }
+    }
+    
+    @objc func removeChildVC(){
+        childViewController?.willMove(toParent: nil)
+        childViewController?.view.removeFromSuperview()
+        childViewController?.removeFromParent()
     }
     
     private func configure(){
