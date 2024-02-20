@@ -27,9 +27,15 @@ final class TabBarController: UITabBarController {
     }
     
     @objc func removeChildVC(){
-        childViewController?.willMove(toParent: nil)
-        childViewController?.view.removeFromSuperview()
-        childViewController?.removeFromParent()
+        UIView.animate(withDuration: 0.25) { [weak self] in
+            self?.childViewController?.view.layer.opacity = 0
+        } completion: {[weak self] _ in
+            guard let self else { return }
+            childViewController?.willMove(toParent: nil)
+            childViewController?.view.removeFromSuperview()
+            childViewController?.removeFromParent()
+        }
+
     }
     
     private func configure(){

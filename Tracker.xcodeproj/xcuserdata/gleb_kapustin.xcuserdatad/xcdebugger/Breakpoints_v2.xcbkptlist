@@ -36,5 +36,68 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "96D6F3F0-7C08-43AD-8B62-B21634C16E89"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/ViewModels/TrackersViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "setInitialStateButton(cell:trackerItem:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "96D6F3F0-7C08-43AD-8B62-B21634C16E89 - 5ad87fd681972bbf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackersViewModel.setInitialStateButton(indexPath: Foundation.IndexPath, trackerItem: Tracker.Tracker) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gleb_kapustin/XcodeProjects/Tracker/Tracker/ViewModels/TrackersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "888">
+               </Location>
+               <Location
+                  uuid = "96D6F3F0-7C08-43AD-8B62-B21634C16E89 - 5ad87fd681972bbf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackersViewModel.setInitialStateButton(indexPath: Foundation.IndexPath, trackerItem: Tracker.Tracker) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gleb_kapustin/XcodeProjects/Tracker/Tracker/ViewModels/TrackersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "640">
+               </Location>
+               <Location
+                  uuid = "96D6F3F0-7C08-43AD-8B62-B21634C16E89 - 5a2f14ea25c35a85"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackersViewModel.setInitialStateButton(cell: Tracker.TrackerCollectionViewCell, trackerItem: Tracker.Tracker) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gleb_kapustin/XcodeProjects/Tracker/Tracker/ViewModels/TrackersViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "640">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

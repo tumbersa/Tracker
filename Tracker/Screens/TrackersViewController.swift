@@ -13,13 +13,12 @@ protocol TrackerCollectionViewCellDelegate: AnyObject {
 
 final class TrackersViewController: UIViewController {
     private let dateFormatter = DateFormatter()
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
-    
-    private var allCategories: [TrackerCategory] = []
-    private var categories: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord] = []
-    private var currentDate: Date = Date()
+   
+    private let viewModel = TrackersViewModel()
+   
+    private var currentDate: Date {
+        viewModel.currentDate
+    }
 
     private let emptyStateImageView: UIImageView = {
         let emptyStateImageView = UIImageView()
@@ -82,7 +81,7 @@ final class TrackersViewController: UIViewController {
         configureVC()
         configureCollectionView()
         configurePatchViews()
-        configureEmptyState(isEmpty: categories.isEmpty)
+        configureEmptyState(isEmpty: viewModel.categories.isEmpty)
     }
 
     private func configurePatchViews(){
@@ -117,8 +116,27 @@ final class TrackersViewController: UIViewController {
         //trackerCategoryStore.clearDB()
         //trackerCategoryStore.addNewTrackerCategory(MockData.category)
         
-        allCategories = trackerCategoryStore.categories
-        completedTrackers = trackerRecordStore.trackerRecords
+        viewModel.allCategoriesBinding = { [weak self] _ in
+            guard let self else { return }
+            collectionView.reloadData()
+            configureEmptyState(isEmpty: viewModel.categories.isEmpty)
+        }
+        
+        viewModel.completedTrackersBinding = { (arg0) in
+            
+            let (flag, countDayRecord, cell) = arg0
+            
+            if flag {
+                cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
+                cell.plusButton.alpha = 1
+            } else {
+                cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+                cell.plusButton.alpha = 0.3
+            }
+            
+            cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(countDayRecord)
+        }
+       
         
         view.backgroundColor = .systemBackground
         dateFormatter.dateFormat = "dd.MM.yy"
@@ -134,7 +152,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func configureCollectionView(){
-        updateCategories()
+        
         view.addSubview(collectionView)
         
         collectionView.dataSource = self
@@ -147,12 +165,11 @@ final class TrackersViewController: UIViewController {
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         let formattedDate = dateFormatter.string(from: selectedDate)
-        currentDate = selectedDate
+        viewModel.currentDate = selectedDate
         patchLabel.text = formattedDate
         
-        updateCategories()
-        collectionView.reloadData()
-        configureEmptyState(isEmpty: categories.isEmpty)
+        
+        viewModel.updateCategories()
     }
     
     private func configureEmptyState(isEmpty: Bool) {
@@ -176,30 +193,19 @@ final class TrackersViewController: UIViewController {
         }
     }
     
-    private func updateCategories(){
-        categories.removeAll()
-        allCategories.forEach {
-            var newTrackers: [Tracker] = []
-            for tracker in $0.trackers {
-                if tracker.schedule.contains(where: { $0.rawValue == currentDate.dayNumberOfWeek() }) {
-                    newTrackers.append(tracker)
-                }
-            }
-            if !newTrackers.isEmpty  {
-                categories.append(TrackerCategory(header: $0.header, trackers: newTrackers))
-            }
-        }
-    }
+   
 }
+
+//MARK: - UICollectionViewDataSource
 
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        categories.count
+        viewModel.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        categories[section].trackers.count
+        viewModel.categories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -208,32 +214,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         cell.delegate = self
-        let trackerItem = categories[indexPath.section].trackers[indexPath.item]
-        setInitialStateButton(cell: cell, trackerItem: trackerItem)
+        let trackerItem = viewModel.categories[indexPath.section].trackers[indexPath.item]
+        viewModel.setInitialStateButton(cell: cell, trackerItem: trackerItem)
+        
         cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name)
         return cell
-    }
-    
-    private func setInitialStateButton(cell: TrackerCollectionViewCell, trackerItem: Tracker){
-        var isMarked: Bool = false
-        var countDayRecord = 0
-        completedTrackers.forEach {
-            if trackerItem.id == $0.id && dateFormatter.string(from: currentDate) == dateFormatter.string(from: $0.date) {
-                isMarked = true
-            }
-            if trackerItem.id == $0.id {
-                countDayRecord += 1
-            }
-        }
-        
-        if isMarked {
-            cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            cell.plusButton.alpha = 0.3
-        } else {
-            cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
-            cell.plusButton.alpha = 1
-        }
-        cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(countDayRecord)
     }
 }
 
@@ -260,7 +245,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     //MARK: -Supplementary view
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerSupplementaryView.reuseID, for: indexPath) as! TrackerSupplementaryView
-        view.set(text: categories[indexPath.section].header)
+        view.set(text: viewModel.categories[indexPath.section].header)
         return view
     }
     
@@ -277,78 +262,24 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 }
 
 //MARK: - TrackerCollectionViewCellDelegate
+
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
-    
     func plusButtonTapped(cell: TrackerCollectionViewCell) {
-        
         guard Date() >= currentDate else { return }
-        
-        let indexPath = collectionView.indexPath(for: cell)!
-        let trackerItem = categories[indexPath.section].trackers[indexPath.item]
-        let currentDateString = dateFormatter.string(from: currentDate)
-        
-        var isMarked: Bool = false
-        var countDayRecord = 0
-        completedTrackers.forEach {
-            if trackerItem.id == $0.id && currentDateString == dateFormatter.string(from: $0.date) {
-                isMarked = true
-            }
-            if trackerItem.id == $0.id {
-                countDayRecord += 1
-            }
+        if let indexPath = collectionView.indexPath(for: cell) {
+            viewModel.plusButtonTapped(cell: cell, indexPath: indexPath)
         }
-        
-        if isMarked {
-            trackerRecordStore.deleteTrackerRecord(
-                trackerRecord: TrackerRecord(id: trackerItem.id, date: currentDate))
-            completedTrackers.removeAll(where: {$0.id == trackerItem.id && currentDateString == dateFormatter.string(from: $0.date)})
-            cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
-            cell.plusButton.alpha = 1
-            
-            countDayRecord -= 1
-        } else {
-            let newTrackerRecord = TrackerRecord(id: trackerItem.id, date: currentDate)
-            trackerRecordStore.addTrackerRecord(trackerRecord: newTrackerRecord)
-            completedTrackers.append(newTrackerRecord)
-            cell.plusButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            cell.plusButton.alpha = 0.3
-            
-            countDayRecord += 1
-        }
-        cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(countDayRecord)
     }
 }
+
+//MARK: - ModalChoiceVCDelegate
 
 extension TrackersViewController: ModalChoiceVCDelegate {
     func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCState) {
         vc.dismiss(animated: true)
         let vc = CreationTrackerViewController(state: state)
-        vc.delegate = self
+        vc.delegate = viewModel
         present(UINavigationController(rootViewController: vc), animated: true)
     }
 }
 
-extension TrackersViewController: ModalCreationTrackerVCDelegate {
-    func createTracker(category: TrackerCategory) {
-        var isExist = false
-        var trackers: [Tracker] = []
-        for (index, i) in allCategories.enumerated() {
-            if i.header == category.header {
-                isExist = true
-                trackers.append(contentsOf: i.trackers)
-                trackers.append(contentsOf: category.trackers)
-                
-                let trackerCategory = TrackerCategory(header: i.header, trackers: trackers)
-                trackerCategoryStore.updateObject(trackerCategory: trackerCategory)
-                allCategories[index] = trackerCategory
-            }
-        }
-        if !isExist {
-            trackerCategoryStore.addNewTrackerCategory(category)
-            allCategories.append(category)
-        }
-        updateCategories()
-        collectionView.reloadData()
-        configureEmptyState(isEmpty: categories.isEmpty)
-    }
-}
