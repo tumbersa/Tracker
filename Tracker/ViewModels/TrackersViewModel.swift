@@ -7,7 +7,20 @@
 
 import Foundation
 
-final class TrackersViewModel {
+protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
+    var currentDate: Date { get set }
+    var allCategories: [TrackerCategory] { get }
+    var categories: [TrackerCategory] { get }
+    
+    var allCategoriesBinding: Binding<[TrackerCategory]>? { get set }
+    var completedTrackersBinding: Binding<(Bool, Int, TrackerCollectionViewCell)>? { get set }
+    
+    func setInitialStateButton(cell: TrackerCollectionViewCell, trackerItem: Tracker)
+    func plusButtonTapped(cell: TrackerCollectionViewCell, indexPath: IndexPath)
+    func updateCategories()
+}
+
+final class TrackersViewModel: TrackersViewModelProtocol {
     private let dateFormatter = DateFormatter()
     var currentDate: Date = Date()
     
