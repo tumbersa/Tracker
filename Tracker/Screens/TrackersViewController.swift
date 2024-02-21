@@ -134,9 +134,9 @@ final class TrackersViewController: UIViewController {
         
         viewModel.completedTrackersBinding = { (arg0) in
             
-            let (flag, countDayRecord, cell) = arg0
-            
-            if flag {
+            let (isSetPlus, countDayRecord, cell) = arg0
+            guard let cell = cell as? TrackerCollectionViewCell else { return }
+            if isSetPlus {
                 cell.plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
                 cell.plusButton.alpha = 1
             } else {
@@ -225,7 +225,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         cell.delegate = self
         let trackerItem = viewModel.categories[indexPath.section].trackers[indexPath.item]
-        viewModel.setInitialStateButton(cell: cell, trackerItem: trackerItem)
+        viewModel.setInitialStateButton(someDataForBinding: cell, trackerItem: trackerItem)
         
         cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name)
         return cell
@@ -277,7 +277,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func plusButtonTapped(cell: TrackerCollectionViewCell) {
         guard Date() >= currentDate else { return }
         if let indexPath = collectionView.indexPath(for: cell) {
-            viewModel.plusButtonTapped(cell: cell, indexPath: indexPath)
+            viewModel.plusButtonTapped(someDataForBinding: cell, indexPath: indexPath)
         }
     }
 }

@@ -13,10 +13,10 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     var categories: [TrackerCategory] { get }
     
     var allCategoriesBinding: Binding<[TrackerCategory]>? { get set }
-    var completedTrackersBinding: Binding<(Bool, Int, TrackerCollectionViewCell)>? { get set }
+    var completedTrackersBinding: Binding<(Bool, Int, SomeData)>? { get set }
     
-    func setInitialStateButton(cell: TrackerCollectionViewCell, trackerItem: Tracker)
-    func plusButtonTapped(cell: TrackerCollectionViewCell, indexPath: IndexPath)
+    func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
+    func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
     func updateCategories()
 }
 
@@ -32,7 +32,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private var completedTrackers: [TrackerRecord]
     
     var allCategoriesBinding: Binding<[TrackerCategory]>?
-    var completedTrackersBinding: Binding<(Bool, Int, TrackerCollectionViewCell)>?
+    var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore(),
@@ -79,7 +79,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         completedTrackers.append(newTrackerRecord)
     }
     
-    func plusButtonTapped(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+    func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath) {
         let trackerItem = categories[indexPath.section].trackers[indexPath.item]
         let currentDateString = dateFormatter.string(from: currentDate)
         
@@ -103,10 +103,10 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             addTrackerRecord(newTrackerRecord: newTrackerRecord)
             countDayRecord += 1
         }
-        completedTrackersBinding?((isMarked, countDayRecord, cell))
+        completedTrackersBinding?((isMarked, countDayRecord, someDataForBinding))
     }
     
-    func setInitialStateButton(cell: TrackerCollectionViewCell, trackerItem: Tracker){
+    func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker){
         var isMarked: Bool = false
         var countDayRecord = 0
         completedTrackers.forEach {
@@ -118,7 +118,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             }
         }
         
-        completedTrackersBinding?((!isMarked, countDayRecord, cell))
+        completedTrackersBinding?((!isMarked, countDayRecord, someDataForBinding))
     }
 }
 
