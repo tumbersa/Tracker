@@ -57,6 +57,7 @@ final class CategoriesViewController: UIViewController {
         configure()
         layoutUI()
         configureTableView()
+        configureEmptyState(isEmpty: viewModel.categories.isEmpty)
     }
     
   
@@ -286,9 +287,8 @@ extension CategoriesViewController: UITableViewDelegate {
             vc.delegate = viewModel
             navigationController?.pushViewController(vc, animated: true)
         }
-        return UIContextMenuConfiguration(actionProvider:  {[weak self] actions in
-            guard let self else { return UIMenu()}
-            return UIMenu(children: [editAction,deleteAction])
+        return UIContextMenuConfiguration(actionProvider:  { actions in
+            UIMenu(children: [editAction,deleteAction])
         })
     }
     
