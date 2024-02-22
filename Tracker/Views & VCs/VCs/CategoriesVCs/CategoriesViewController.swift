@@ -54,7 +54,7 @@ final class CategoriesViewController: UIViewController {
     
     private func configure() {
         
-        viewModel.categoriesBinding = { [weak self] update in
+        viewModel.insertOrEditCategoryBinding = { [weak self] update in
             guard let self else { return }
            
             ///флаги для обработки ячеек, у которых верхние или нижние края закруглены
@@ -64,7 +64,6 @@ final class CategoriesViewController: UIViewController {
             var flagToReloadMovedBeginOrEnd = false
             
             let insertedIndexPaths = update.insertedIndexes.map{IndexPath(row: $0, section: 0)}
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
             
             //Замена текста
             if let movedNewIndex = update.movedIndexes.first?.newIndex,
@@ -82,7 +81,6 @@ final class CategoriesViewController: UIViewController {
             tableView.performBatchUpdates {[weak self] in
                 guard let self else { return }
                 tableView.insertRows(at: insertedIndexPaths, with: .automatic)
-                tableView.deleteRows(at: deletedIndexPaths, with: .automatic)
                 
                 for move in update.movedIndexes {
                     print(move.oldIndex, move.newIndex)
@@ -108,10 +106,46 @@ final class CategoriesViewController: UIViewController {
                        let newIndex = update.movedIndexes.first?.newIndex {
                         tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .automatic)
                     }
+                    
                 }
             }
             configureEmptyState(isEmpty: viewModel.categories.isEmpty)
         }
+        
+        viewModel.deleteCategoryBinding = {[weak self] update in
+            guard let self else { return }
+            
+            ///флаги для обработки ячеек, у которых верхние или нижние края закруглены
+            let countCategories = viewModel.categories.count
+            let flagToReloadDeletedBegin = update.deletedIndexes.first ?? -1 == 0
+            let flagToReloadDeletedEnd = update.deletedIndexes.first ?? -1 == countCategories
+            
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+            
+            //Главная часть изменения таблицы
+            tableView.performBatchUpdates {[weak self] in
+                guard let self else { return }
+                tableView.deleteRows(at: deletedIndexPaths, with: .automatic)
+            }
+            
+            ///Batch Updates для обработки ячеек, у которых верхние или нижние края закруглены
+            tableView.performBatchUpdates {[weak self] in
+                guard let self else { return }
+                
+                if countCategories != 0 {
+                    if flagToReloadDeletedBegin {
+                        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    }
+                    
+                    if flagToReloadDeletedEnd {
+                        tableView.reloadRows(at: [IndexPath(row: countCategories - 1, section: 0)], with: .automatic)
+                    }
+                }
+            }
+            configureEmptyState(isEmpty: viewModel.categories.isEmpty)
+        }
+        
+       
         
         view.backgroundColor = .systemBackground
         navigationItem.setHidesBackButton(true, animated: true)
@@ -208,13 +242,30 @@ extension CategoriesViewController: UITableViewDataSource {
     
 }
 
+//MARK: - UITableViewDelegate
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
         let attributedTitle = NSAttributedString(string: "Удалить", attributes: redColorAttribute)
         
-        let deleteAction =  UIAction(title: "Удалить") { _ in
+        let deleteAction =  UIAction(title: "Удалить") {[weak self] _ in
+            guard let self else { return }
+            let cell = tableView.cellForRow(at: indexPath)
+            cell?.accessoryType = .checkmark
+            let alert = UIAlertController(title: nil, message: "Эта категория точно не нужна? Все её трекеры удалятся", preferredStyle: .actionSheet)
             
+            let deleteAlertAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+                guard let self else { return }
+                viewModel.deleteTrackerCategory(headerTrackerCategory: cell?.textLabel?.text ?? "")
+            }
+            
+            let cancelAlertAction = UIAlertAction(title: "Отменить", style: .cancel) {_ in
+                cell?.accessoryType = .none
+            }
+            
+            alert.addAction(deleteAlertAction)
+            alert.addAction(cancelAlertAction)
+            present(alert, animated: true)
         }
         deleteAction.setValue(attributedTitle, forKey: "attributedTitle")
         
@@ -226,8 +277,9 @@ extension CategoriesViewController: UITableViewDelegate {
             vc.delegate = viewModel
             navigationController?.pushViewController(vc, animated: true)
         }
-        return UIContextMenuConfiguration(actionProvider:  { actions in
-            UIMenu(children: [editAction,deleteAction])
+        return UIContextMenuConfiguration(actionProvider:  {[weak self] actions in
+            guard let self else { return UIMenu()}
+            return UIMenu(children: [editAction,deleteAction])
         })
     }
     

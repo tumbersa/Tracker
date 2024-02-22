@@ -8,6 +8,12 @@
 import CoreData
 import UIKit
 
+enum TrackerUpdateType {
+    case insert
+    case edit
+    case delete
+}
+
 struct TrackerCategoryStoreUpdate {
     struct Move: Hashable {
         let oldIndex: Int
@@ -20,6 +26,7 @@ struct TrackerCategoryStoreUpdate {
 
 final class TrackerCategoryStore: NSObject {
     
+    private var typeUpdate: TrackerUpdateType?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
@@ -122,6 +129,17 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
+    func deleteCategory(headerCategory: String){
+        let objects = fetchedResultsController.fetchedObjects
+        objects?.forEach { trackerCatecoryCoreData in
+            if let header = trackerCatecoryCoreData.header,
+               header == headerCategory {
+                context.delete(trackerCatecoryCoreData)
+            }
+        }
+        (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+    }
+    
      func clearDB() {
         // create the delete request for the specified entity
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerCategoryCoreData.fetchRequest()
@@ -147,10 +165,13 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.didUpdate(update: TrackerCategoryStoreUpdate(
-            insertedIndexes: insertedIndexes  ?? IndexSet(),
-            deletedIndexes: deletedIndexes  ?? IndexSet(),
-            movedIndexes: movedIndexes ?? Set<TrackerCategoryStoreUpdate.Move>()))
+        if let type = typeUpdate {
+            delegate?.didUpdate(update: TrackerCategoryStoreUpdate(
+                insertedIndexes: insertedIndexes  ?? IndexSet(),
+                deletedIndexes: deletedIndexes  ?? IndexSet(),
+                movedIndexes: movedIndexes ?? Set<TrackerCategoryStoreUpdate.Move>()),
+                type: type)
+        }
         
         insertedIndexes = nil
         deletedIndexes = nil
@@ -168,12 +189,15 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
             case .insert:
                 guard let newIndexPath else { return }
                 insertedIndexes?.insert(newIndexPath.row)
+                typeUpdate = .insert
             case .delete:
                 guard let indexPath else { return }
                 deletedIndexes?.insert(indexPath.row)
+                typeUpdate = .delete
             case .move:
                 guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { return }
                 movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
+                typeUpdate = .edit
             default:
                 break
             }

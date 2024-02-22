@@ -8,7 +8,7 @@
 import Foundation
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func didUpdate(update: TrackerCategoryStoreUpdate)
+    func didUpdate(update: TrackerCategoryStoreUpdate, type: TrackerUpdateType)
 }
 
 protocol CategoriesSupplementaryVCDelegate: AnyObject {
@@ -20,12 +20,18 @@ final class CategoriesViewModel {
     
     private(set) var categories: [String] = []
     
-    var categoriesBinding: Binding<TrackerCategoryStoreUpdate>?
+    var insertOrEditCategoryBinding: Binding<TrackerCategoryStoreUpdate>?    
+    var deleteCategoryBinding: Binding<TrackerCategoryStoreUpdate>?
+    
     
     init(trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore()) {
         self.trackerCategoryStore = trackerCategoryStore
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.headers
+    }
+    
+    func deleteTrackerCategory(headerTrackerCategory: String){
+        trackerCategoryStore.deleteCategory(headerCategory: headerTrackerCategory)
     }
 }
 
@@ -41,9 +47,14 @@ extension CategoriesViewModel: CategoriesSupplementaryVCDelegate {
 }
 
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
-    func didUpdate(update: TrackerCategoryStoreUpdate) {
+    func didUpdate(update: TrackerCategoryStoreUpdate, type: TrackerUpdateType ) {
         categories = trackerCategoryStore.headers
-        categoriesBinding?(update)
+        switch type {
+        case .insert, .edit:
+            insertOrEditCategoryBinding?(update)
+        case .delete:
+            deleteCategoryBinding?(update)
+        }
     }
     
 }
