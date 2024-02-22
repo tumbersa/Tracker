@@ -32,7 +32,7 @@ final class CategoriesViewModel: CategoriesViewModelProtocol {
     var deleteCategoryBinding: Binding<TrackerCategoryStoreUpdate>?
     
     
-    init(trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore()) {
+    init(trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared) {
         self.trackerCategoryStore = trackerCategoryStore
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.headers
@@ -47,7 +47,7 @@ extension CategoriesViewModel: CategoriesSupplementaryVCDelegate {
     
     func dismissVC(mode: CategoriesSupplementaryVCMode, oldHeaderCategory: String, newHeaderCategory: String) {
         if mode == .create {
-            trackerCategoryStore.addNewTrackerCategory(TrackerCategory(header: newHeaderCategory, trackers: []))
+            trackerCategoryStore.addHeader(headerCategory: newHeaderCategory)
         } else {
             trackerCategoryStore.updateHeader(oldValue: oldHeaderCategory, newValue: newHeaderCategory)
         }
@@ -57,8 +57,9 @@ extension CategoriesViewModel: CategoriesSupplementaryVCDelegate {
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
     func didUpdate(update: TrackerCategoryStoreUpdate, type: TrackerUpdateType ) {
         categories = trackerCategoryStore.headers
+        print(type)
         switch type {
-        case .insert, .edit:
+        case .insert, .edit, .update:
             insertOrEditCategoryBinding?(update)
         case .delete:
             deleteCategoryBinding?(update)

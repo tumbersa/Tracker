@@ -11,6 +11,7 @@ import UIKit
 enum TrackerUpdateType {
     case insert
     case edit
+    case update
     case delete
 }
 
@@ -20,15 +21,20 @@ struct TrackerCategoryStoreUpdate {
         let newIndex: Int
     }
     let insertedIndexes: IndexSet
+    let updatedIndexes: IndexSet
     let deletedIndexes: IndexSet
     let movedIndexes: Set<Move>
 }
 
 final class TrackerCategoryStore: NSObject {
     
+    static let shared = TrackerCategoryStore()
+    
+    
     private var typeUpdate: TrackerUpdateType?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
+    private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     private let context: NSManagedObjectContext
@@ -49,7 +55,7 @@ final class TrackerCategoryStore: NSObject {
     
     weak var delegate: TrackerCategoryStoreDelegate?
     
-    override init() {
+    private override init() {
         context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         mapper = TrackerStore()
         super.init()
@@ -129,6 +135,12 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
+    func addHeader(headerCategory: String){
+        let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
+        trackerCategoryCoreData.header = headerCategory
+        (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+    }
+    
     func deleteCategory(headerCategory: String){
         let objects = fetchedResultsController.fetchedObjects
         objects?.forEach { trackerCatecoryCoreData in
@@ -161,13 +173,17 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
+        updatedIndexes = IndexSet()
         movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
+        typeUpdate = .insert
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
         if let type = typeUpdate {
             delegate?.didUpdate(update: TrackerCategoryStoreUpdate(
                 insertedIndexes: insertedIndexes  ?? IndexSet(),
+                updatedIndexes: updatedIndexes ?? IndexSet(),
                 deletedIndexes: deletedIndexes  ?? IndexSet(),
                 movedIndexes: movedIndexes ?? Set<TrackerCategoryStoreUpdate.Move>()),
                 type: type)
@@ -176,6 +192,13 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         insertedIndexes = nil
         deletedIndexes = nil
         movedIndexes = nil
+        updatedIndexes = nil
+        
+        
+        NotificationCenter.default.post(
+            name: NSNotification.Name.didChangeTrackers,
+            object: self, userInfo: ["Type" : typeUpdate as Any])
+        typeUpdate = nil
     }
 
     
@@ -194,6 +217,10 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
                 guard let indexPath else { return }
                 deletedIndexes?.insert(indexPath.row)
                 typeUpdate = .delete
+            case .update:
+                guard let indexPath else { return }
+                updatedIndexes?.insert(indexPath.row)
+                typeUpdate = .update
             case .move:
                 guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { return }
                 movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
@@ -203,3 +230,4 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
             }
     }
 }
+

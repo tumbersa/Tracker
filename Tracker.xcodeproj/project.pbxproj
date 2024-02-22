@@ -42,6 +42,7 @@
 		A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */; };
 		A4D9D4AA2B867ED0006AEDED /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D9D4A92B867ED0006AEDED /* CategoriesViewModel.swift */; };
 		A4DC7E5A2B628D8300FC6DD4 /* IconPaletteColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DC7E592B628D8300FC6DD4 /* IconPaletteColorCollectionViewCell.swift */; };
+		A4E0E1742B87B4EB00F92106 /* Notification.Name+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E0E1732B87B4EB00F92106 /* Notification.Name+Ext.swift */; };
 		A4E793002B849D8000196C02 /* TrackersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E792FF2B849D8000196C02 /* TrackersViewModel.swift */; };
 		A4E793022B849DA100196C02 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E793012B849DA100196C02 /* Binding.swift */; };
 		A4E9D5292B4FCFF1002FCDDC /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E9D5282B4FCFF1002FCDDC /* TrackerCategory.swift */; };
@@ -85,6 +86,7 @@
 		A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSupplementaryView.swift; sourceTree = "<group>"; };
 		A4D9D4A92B867ED0006AEDED /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
 		A4DC7E592B628D8300FC6DD4 /* IconPaletteColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPaletteColorCollectionViewCell.swift; sourceTree = "<group>"; };
+		A4E0E1732B87B4EB00F92106 /* Notification.Name+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+Ext.swift"; sourceTree = "<group>"; };
 		A4E792FF2B849D8000196C02 /* TrackersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewModel.swift; sourceTree = "<group>"; };
 		A4E793012B849DA100196C02 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		A4E9D5282B4FCFF1002FCDDC /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				A45839022B5329260066E02A /* Date+Ext.swift */,
 				A4750DFA2B837AD900A005A4 /* UserDefaults+Ext.swift */,
 				A45183B52B863BD700211682 /* UIViewController+Ext.swift */,
+				A4E0E1732B87B4EB00F92106 /* Notification.Name+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				A45183B22B8618CC00211682 /* CategoriesViewController.swift in Sources */,
 				A422EBF32B4DB9BC00716981 /* TabBarController.swift in Sources */,
 				A4BE1E392B6FAB6A00861B42 /* UIColorMarshalling.swift in Sources */,
+				A4E0E1742B87B4EB00F92106 /* Notification.Name+Ext.swift in Sources */,
 				A43CDEA82B4C000E002D0064 /* SceneDelegate.swift in Sources */,
 				A48E70542B74E355002F6EEE /* TrackerRecordStore.swift in Sources */,
 				A45181742B52D5BB002B34C9 /* ModalChoiceViewController.swift in Sources */,

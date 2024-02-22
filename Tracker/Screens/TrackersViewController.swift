@@ -94,6 +94,7 @@ final class TrackersViewController: UIViewController {
         configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
     }
 
+ 
     private func configurePatchViews(){
         let bar = navigationController!.navigationBar
         bar.addSubview(patchView)

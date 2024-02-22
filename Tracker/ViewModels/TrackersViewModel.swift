@@ -24,6 +24,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private let dateFormatter = DateFormatter()
     var currentDate: Date = Date()
     
+    private var observer: NSObjectProtocol?
     private let trackerCategoryStore: TrackerCategoryStore
     private let trackerRecordStore: TrackerRecordStore
     
@@ -35,7 +36,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
     
     init(
-        trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore(),
+        trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
         trackerRecordStore: TrackerRecordStore = TrackerRecordStore()
     ) {
         self.trackerCategoryStore = trackerCategoryStore
@@ -43,16 +44,31 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         
         allTrackerCategories = trackerCategoryStore.categories
         completedTrackers = trackerRecordStore.trackerRecords
-        updateTrackers()
         dateFormatter.dateFormat = "dd.MM.yy"
         
+        configureObserver()
         
+        updateTrackers()
         //trackerCategoryStore.clearDB()
         //trackerRecordStore.clearDB()
         //trackerCategoryStore.addNewTrackerCategory(MockData.category)
     }
     
-     func updateTrackers(){
+    private func configureObserver(){
+        observer = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.didChangeTrackers,
+            object: nil, queue: .main) { [weak self] notification in
+                guard let self else { return }
+                if let dict = notification.userInfo as? [String : TrackerUpdateType],
+                   let type = dict["Type"],
+                   !(type == .insert) {
+                    allTrackerCategories = trackerCategoryStore.categories
+                    self.updateTrackers()
+                }
+            }
+    }
+    
+    func updateTrackers(){
         visibleTrackerCategories.removeAll()
         allTrackerCategories.forEach {
             var newTrackers: [Tracker] = []
@@ -69,7 +85,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         allTrackerCategoriesBinding?(allTrackerCategories)
     }
     
-  
+    
     
     private func deleteTrackerRecord(trackerRecord: TrackerRecord) {
         let currentDateString = dateFormatter.string(from: currentDate)
@@ -79,7 +95,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         completedTrackers.removeAll(where: {$0.id == trackerRecord.id && currentDateString == dateFormatter.string(from: $0.date)})
     }
     
-   private func addTrackerRecord(newTrackerRecord: TrackerRecord){
+    private func addTrackerRecord(newTrackerRecord: TrackerRecord){
         trackerRecordStore.addTrackerRecord(trackerRecord: newTrackerRecord)
         completedTrackers.append(newTrackerRecord)
     }
@@ -129,11 +145,14 @@ final class TrackersViewModel: TrackersViewModelProtocol {
 
 extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     func createTracker(category: TrackerCategory) {
-        var isExist = false
+        
+        NotificationCenter.default.removeObserver(observer as Any)
+        
         var trackers: [Tracker] = []
+        allTrackerCategories = trackerCategoryStore.categories
         for (index, i) in allTrackerCategories.enumerated() {
             if i.header == category.header {
-                isExist = true
+                
                 trackers.append(contentsOf: i.trackers)
                 trackers.append(contentsOf: category.trackers)
                 
@@ -142,10 +161,8 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
                 allTrackerCategories[index] = trackerCategory
             }
         }
-        if !isExist {
-            trackerCategoryStore.addNewTrackerCategory(category)
-            allTrackerCategories.append(category)
-        }
         updateTrackers()
+        
+        configureObserver()
     }
 }

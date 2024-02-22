@@ -74,6 +74,7 @@ final class CategoriesViewController: UIViewController {
             var flagToReloadMovedBeginOrEnd = false
             
             let insertedIndexPaths = update.insertedIndexes.map{IndexPath(row: $0, section: 0)}
+            let updatedIndexPaths = update.updatedIndexes.map{ IndexPath(row: $0, section: 0) }
             
             //Замена текста
             if let movedNewIndex = update.movedIndexes.first?.newIndex,
@@ -91,9 +92,9 @@ final class CategoriesViewController: UIViewController {
             tableView.performBatchUpdates {[weak self] in
                 guard let self else { return }
                 tableView.insertRows(at: insertedIndexPaths, with: .automatic)
+                tableView.reloadRows(at: updatedIndexPaths, with: .automatic)
                 
                 for move in update.movedIndexes {
-                    print(move.oldIndex, move.newIndex)
                     tableView.moveRow (
                         at: IndexPath(row: move.oldIndex, section: 0),
                         to: IndexPath(row: move.newIndex, section: 0)
