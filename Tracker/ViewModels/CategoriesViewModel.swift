@@ -11,6 +11,10 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
     func didUpdate(update: TrackerCategoryStoreUpdate)
 }
 
+protocol CategoriesSupplementaryVCDelegate: AnyObject {
+    func dismissVC(mode: CategoriesSupplementaryVCMode, oldHeaderCategory: String, newHeaderCategory: String)
+}
+
 final class CategoriesViewModel {
     private let trackerCategoryStore: TrackerCategoryStore
     
@@ -26,8 +30,13 @@ final class CategoriesViewModel {
 }
 
 extension CategoriesViewModel: CategoriesSupplementaryVCDelegate {
-    func dismissVC(mode: CategoriesSupplementaryVCMode, categoryString: String) {
-        trackerCategoryStore.addNewTrackerCategory(TrackerCategory(header: categoryString, trackers: []))
+    
+    func dismissVC(mode: CategoriesSupplementaryVCMode, oldHeaderCategory: String, newHeaderCategory: String) {
+        if mode == .create {
+            trackerCategoryStore.addNewTrackerCategory(TrackerCategory(header: newHeaderCategory, trackers: []))
+        } else {
+            trackerCategoryStore.updateHeader(oldValue: oldHeaderCategory, newValue: newHeaderCategory)
+        }
     }
 }
 

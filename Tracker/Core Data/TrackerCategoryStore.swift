@@ -9,16 +9,20 @@ import CoreData
 import UIKit
 
 struct TrackerCategoryStoreUpdate {
+    struct Move: Hashable {
+        let oldIndex: Int
+        let newIndex: Int
+    }
     let insertedIndexes: IndexSet
     let deletedIndexes: IndexSet
-    let updatedIndexes: IndexSet
+    let movedIndexes: Set<Move>
 }
 
 final class TrackerCategoryStore: NSObject {
     
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
-    private var updatedIndexes: IndexSet?
+    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     private let context: NSManagedObjectContext
     private let mapper: TrackerCategoryStoreMapper
@@ -102,7 +106,18 @@ final class TrackerCategoryStore: NSObject {
         let request = TrackerCategoryCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "header == %@", trackerCategory.header)
         if let trackerCategoryCoreData = try? context.fetch(request).first {
+            
             updateExistingTrackerCategory(trackerCategoryCoreData: trackerCategoryCoreData, trackerCategory: trackerCategory)
+            
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+        }
+    }
+    
+    func updateHeader(oldValue: String, newValue: String){
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "header == %@", oldValue)
+        if let trackerCategoryCoreData = try? context.fetch(request).first {
+            trackerCategoryCoreData.header = newValue
             (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
         }
     }
@@ -128,17 +143,18 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
-        updatedIndexes = IndexSet()
+        movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(update: TrackerCategoryStoreUpdate(
             insertedIndexes: insertedIndexes  ?? IndexSet(),
             deletedIndexes: deletedIndexes  ?? IndexSet(),
-            updatedIndexes: updatedIndexes ?? IndexSet()))
+            movedIndexes: movedIndexes ?? Set<TrackerCategoryStoreUpdate.Move>()))
+        
         insertedIndexes = nil
         deletedIndexes = nil
-        updatedIndexes = nil
+        movedIndexes = nil
     }
 
     
@@ -155,9 +171,9 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
             case .delete:
                 guard let indexPath else { return }
                 deletedIndexes?.insert(indexPath.row)
-            case .update:
-                guard let indexPath else { return }
-                updatedIndexes?.insert(indexPath.row)
+            case .move:
+                guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { return }
+                movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
             default:
                 break
             }

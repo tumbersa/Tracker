@@ -7,9 +7,7 @@
 
 import UIKit
 
-protocol CategoriesSupplementaryVCDelegate: AnyObject {
-    func dismissVC(mode: CategoriesSupplementaryVCMode, categoryString: String)
-}
+
 final class CategoriesViewController: UIViewController {
     
     private let reuseCellID = "CategoriesCell"
@@ -59,26 +57,56 @@ final class CategoriesViewController: UIViewController {
         viewModel.categoriesBinding = { [weak self] update in
             guard let self else { return }
            
+            ///флаги для обработки ячеек, у которых верхние или нижние края закруглены
             let countCategories = viewModel.categories.count
-            let flagToReloadBegin = update.insertedIndexes.first ?? -1 == 0
-            let flagToReloadEnd = update.insertedIndexes.first ?? -1 == countCategories - 1
+            var flagToReloadBegin = update.insertedIndexes.first ?? -1 == 0
+            var flagToReloadEnd = update.insertedIndexes.first ?? -1 == countCategories - 1
+            var flagToReloadMovedBeginOrEnd = false
             
             let insertedIndexPaths = update.insertedIndexes.map{IndexPath(row: $0, section: 0)}
             let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
-            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
             
+            //Замена текста
+            if let movedNewIndex = update.movedIndexes.first?.newIndex,
+                let movedOldIndex = update.movedIndexes.first?.oldIndex {
+                let cell = tableView.cellForRow(at: IndexPath(row: movedOldIndex, section: 0))
+                cell?.textLabel?.text = viewModel.categories[movedNewIndex]
+                
+                flagToReloadBegin = flagToReloadBegin || movedNewIndex == 0
+                flagToReloadEnd = flagToReloadEnd || movedNewIndex == countCategories - 1
+                
+                flagToReloadMovedBeginOrEnd = movedOldIndex == 0 || movedOldIndex == countCategories - 1
+            }
+            
+            //Главная часть изменения таблицы
             tableView.performBatchUpdates {[weak self] in
                 guard let self else { return }
                 tableView.insertRows(at: insertedIndexPaths, with: .automatic)
                 tableView.deleteRows(at: deletedIndexPaths, with: .automatic)
-                tableView.reloadRows(at: updatedIndexPaths, with: .automatic)
                 
+                for move in update.movedIndexes {
+                    print(move.oldIndex, move.newIndex)
+                    tableView.moveRow (
+                        at: IndexPath(row: move.oldIndex, section: 0),
+                        to: IndexPath(row: move.newIndex, section: 0)
+                    )
+                }
+            }
+            
+            ///Batch Updates для обработки ячеек, у которых верхние или нижние края закруглены
+            tableView.performBatchUpdates {[weak self] in
+                guard let self else { return }
                 if countCategories != 1 {
                     if flagToReloadBegin {
-                        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                        tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
                     }
                     if flagToReloadEnd {
                         tableView.reloadRows(at: [IndexPath(row: countCategories - 2, section: 0)], with: .automatic)
+                    }
+                    
+                    if flagToReloadMovedBeginOrEnd,
+                       let newIndex = update.movedIndexes.first?.newIndex {
+                        tableView.reloadRows(at: [IndexPath(row: newIndex, section: 0)], with: .automatic)
                     }
                 }
             }
@@ -181,6 +209,28 @@ extension CategoriesViewController: UITableViewDataSource {
 }
 
 extension CategoriesViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
+        let attributedTitle = NSAttributedString(string: "Удалить", attributes: redColorAttribute)
+        
+        let deleteAction =  UIAction(title: "Удалить") { _ in
+            
+        }
+        deleteAction.setValue(attributedTitle, forKey: "attributedTitle")
+        
+        let editAction =  UIAction(title: "Редактировать") {[weak self] _ in
+            guard let self else { return }
+            let cell = tableView.cellForRow(at: indexPath)
+            
+            let vc = CategoriesSupplementaryViewController(mode: .edit,  categoryForEdit: cell?.textLabel?.text ?? "")
+            vc.delegate = viewModel
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        return UIContextMenuConfiguration(actionProvider:  { actions in
+            UIMenu(children: [editAction,deleteAction])
+        })
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryType =  .checkmark

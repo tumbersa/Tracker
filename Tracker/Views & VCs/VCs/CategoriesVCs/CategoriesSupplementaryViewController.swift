@@ -14,7 +14,8 @@ enum CategoriesSupplementaryVCMode {
 
 final class CategoriesSupplementaryViewController: UIViewController {
 
-    let mode: CategoriesSupplementaryVCMode
+    
+    private let mode: CategoriesSupplementaryVCMode
     weak var delegate: CategoriesSupplementaryVCDelegate?
     
     private let createCategoryTextField: UITextField = {
@@ -24,9 +25,8 @@ final class CategoriesSupplementaryViewController: UIViewController {
         createCategoryTextField.clearButtonMode = .whileEditing
         
         let spacerView = UIView(frame:CGRect(x:0, y:0, width:16, height:createCategoryTextField.bounds.height))
-        createCategoryTextField.leftViewMode = .always
         createCategoryTextField.leftView = spacerView
-        createCategoryTextField.placeholder = "Введите название категории"
+        createCategoryTextField.leftViewMode = .always
         return createCategoryTextField
     }()
     
@@ -40,8 +40,11 @@ final class CategoriesSupplementaryViewController: UIViewController {
         return readyButton
     }()
     
-    init(mode: CategoriesSupplementaryVCMode) {
+    var categoryForEdit: String
+    
+    init(mode: CategoriesSupplementaryVCMode, categoryForEdit: String = "") {
         self.mode = mode
+        self.categoryForEdit = categoryForEdit
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -53,6 +56,7 @@ final class CategoriesSupplementaryViewController: UIViewController {
         
         hideKeyboardWhenTappedAround()
         configure()
+        configureTextField()
         layoutUI()
     }
     
@@ -63,6 +67,14 @@ final class CategoriesSupplementaryViewController: UIViewController {
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = mode == .create ? "Новая категория" : "Редактирование категории"
         createCategoryTextField.delegate = self
+    }
+    
+    private func configureTextField(){
+        if mode == .create {
+            createCategoryTextField.placeholder = "Введите название категории"
+        } else {
+            createCategoryTextField.text = categoryForEdit
+        }
     }
     
     private func layoutUI(){
@@ -81,9 +93,9 @@ final class CategoriesSupplementaryViewController: UIViewController {
         ])
     }
     
-    @objc func dismissVC(_ f: Bool){
+    @objc func dismissVC(){
         navigationController?.popViewController(animated: true)
-        delegate?.dismissVC(mode: mode, categoryString: createCategoryTextField.text ?? "")
+        delegate?.dismissVC(mode: mode, oldHeaderCategory: categoryForEdit, newHeaderCategory: createCategoryTextField.text ?? "")
     }
 }
 
