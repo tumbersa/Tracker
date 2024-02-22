@@ -10,7 +10,7 @@ import UIKit
 final class OnboardingViewController: UIViewController {
     
     private let backgroundImageView = UIImageView()
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let titleLabel  = UILabel()
         titleLabel.font = .systemFont(ofSize: 32, weight: .bold)
         titleLabel.textAlignment = .center
