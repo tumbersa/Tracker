@@ -105,10 +105,6 @@ final class CreationTrackerViewController: UIViewController {
         configureButtons()
     }
     
-    //TODO: - экран с трекерами должен обновляться
-    override func viewDidDisappear(_ animated: Bool) {
-        
-    }
     
     private func configureVC(){
         view.backgroundColor = .systemBackground
