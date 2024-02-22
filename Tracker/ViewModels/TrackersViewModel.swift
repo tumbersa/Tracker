@@ -61,7 +61,8 @@ final class TrackersViewModel: TrackersViewModelProtocol {
                 guard let self else { return }
                 if let dict = notification.userInfo as? [String : TrackerUpdateType],
                    let type = dict["Type"],
-                   !(type == .insert) {
+                   !(type == .insert) { [weak self] in
+                    guard let self else { return }
                     allTrackerCategories = trackerCategoryStore.categories
                     self.updateTrackers()
                 }
