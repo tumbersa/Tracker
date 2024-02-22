@@ -11,7 +11,7 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     
     private let reuseCellID = "CategoriesCell"
-    private var viewModel = CategoriesViewModel()
+    private var viewModel: CategoriesViewModelProtocol
     
     private lazy var tableView = UITableView()
     private lazy var emptyStateImageView: UIImageView = {
@@ -41,6 +41,15 @@ final class CategoriesViewController: UIViewController {
     weak var delegate: CategoriesViewControllerDelegate?
     
     var categoryString: String = ""
+    
+    init(viewModel: CategoriesViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad(){
         super.viewDidLoad()

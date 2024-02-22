@@ -308,7 +308,7 @@ extension CreationTrackerViewController: UITableViewDelegate {
             vc.delegate = self
             navigationController?.pushViewController(vc, animated: true)
         } else {
-            let vc = CategoriesViewController()
+            let vc = CategoriesViewController(viewModel: CategoriesViewModel())
             vc.delegate = self
             vc.categoryString = self.categoryString
             navigationController?.pushViewController(vc, animated: true)

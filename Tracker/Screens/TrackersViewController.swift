@@ -76,7 +76,7 @@ final class TrackersViewController: UIViewController {
     }()
     
 
-    init(viewModel: TrackersViewModelProtocol = TrackersViewModel()) {
+    init(viewModel: TrackersViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

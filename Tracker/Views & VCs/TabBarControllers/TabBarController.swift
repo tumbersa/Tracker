@@ -42,7 +42,7 @@ final class TabBarController: UITabBarController {
         tabBar.tintColor = .trBlue
         tabBar.unselectedItemTintColor = .gray
         
-        let trackerVC = TrackersViewController()
+        let trackerVC = TrackersViewController(viewModel: TrackersViewModel())
         trackerVC.title = "Трекеры"
         trackerVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         

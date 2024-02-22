@@ -7,6 +7,14 @@
 
 import Foundation
 
+protocol CategoriesViewModelProtocol: CategoriesSupplementaryVCDelegate {
+    var categories: [String] { get }
+    
+    var insertOrEditCategoryBinding: Binding<TrackerCategoryStoreUpdate>? {get set}
+    var deleteCategoryBinding: Binding<TrackerCategoryStoreUpdate>? { get set }
+    func deleteTrackerCategory(headerTrackerCategory: String)
+}
+
 protocol TrackerCategoryStoreDelegate: AnyObject {
     func didUpdate(update: TrackerCategoryStoreUpdate, type: TrackerUpdateType)
 }
@@ -15,7 +23,7 @@ protocol CategoriesSupplementaryVCDelegate: AnyObject {
     func dismissVC(mode: CategoriesSupplementaryVCMode, oldHeaderCategory: String, newHeaderCategory: String)
 }
 
-final class CategoriesViewModel {
+final class CategoriesViewModel: CategoriesViewModelProtocol {
     private let trackerCategoryStore: TrackerCategoryStore
     
     private(set) var categories: [String] = []
