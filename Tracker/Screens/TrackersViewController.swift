@@ -20,13 +20,13 @@ final class TrackersViewController: UIViewController {
         viewModel.currentDate
     }
 
-    private let emptyStateImageView: UIImageView = {
+    private lazy var emptyStateImageView: UIImageView = {
         let emptyStateImageView = UIImageView()
         emptyStateImageView.image = UIImage(resource: .trEmptyStateTrackers)
         return emptyStateImageView
     }()
     
-    private let emptyStateLabel: UILabel = {
+    private lazy var emptyStateLabel: UILabel = {
         let emptyStateLabel = UILabel()
         emptyStateLabel.text = "Что будем отслеживать?"
         emptyStateLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
@@ -91,7 +91,7 @@ final class TrackersViewController: UIViewController {
         configureVC()
         configureCollectionView()
         configurePatchViews()
-        configureEmptyState(isEmpty: viewModel.categories.isEmpty)
+        configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
     }
 
     private func configurePatchViews(){
@@ -123,13 +123,10 @@ final class TrackersViewController: UIViewController {
 
     
     private func configureVC(){
-        //trackerCategoryStore.clearDB()
-        //trackerCategoryStore.addNewTrackerCategory(MockData.category)
-        
-        viewModel.allCategoriesBinding = { [weak self] _ in
+        viewModel.allTrackerCategoriesBinding = { [weak self] _ in
             guard let self else { return }
             collectionView.reloadData()
-            configureEmptyState(isEmpty: viewModel.categories.isEmpty)
+            configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
         }
         
         viewModel.completedTrackersBinding = { (arg0) in
@@ -179,7 +176,7 @@ final class TrackersViewController: UIViewController {
         patchLabel.text = formattedDate
         
         
-        viewModel.updateCategories()
+        viewModel.updateTrackers()
     }
     
     private func configureEmptyState(isEmpty: Bool) {
@@ -211,11 +208,11 @@ final class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        viewModel.categories.count
+        viewModel.visibleTrackerCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.categories[section].trackers.count
+        viewModel.visibleTrackerCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -224,7 +221,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         cell.delegate = self
-        let trackerItem = viewModel.categories[indexPath.section].trackers[indexPath.item]
+        let trackerItem = viewModel.visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
         viewModel.setInitialStateButton(someDataForBinding: cell, trackerItem: trackerItem)
         
         cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name)
@@ -255,7 +252,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     //MARK: -Supplementary view
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerSupplementaryView.reuseID, for: indexPath) as! TrackerSupplementaryView
-        view.set(text: viewModel.categories[indexPath.section].header)
+        view.set(text: viewModel.visibleTrackerCategories[indexPath.section].header)
         return view
     }
     
@@ -285,9 +282,9 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 //MARK: - ModalChoiceVCDelegate
 
 extension TrackersViewController: ModalChoiceVCDelegate {
-    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCState) {
+    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCMode) {
         vc.dismiss(animated: true)
-        let vc = CreationTrackerViewController(state: state)
+        let vc = CreationTrackerViewController(mode: state)
         vc.delegate = viewModel
         present(UINavigationController(rootViewController: vc), animated: true)
     }

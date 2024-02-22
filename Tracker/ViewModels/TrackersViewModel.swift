@@ -9,15 +9,15 @@ import Foundation
 
 protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     var currentDate: Date { get set }
-    var allCategories: [TrackerCategory] { get }
-    var categories: [TrackerCategory] { get }
+    var allTrackerCategories: [TrackerCategory] { get }
+    var visibleTrackerCategories: [TrackerCategory] { get }
     
-    var allCategoriesBinding: Binding<[TrackerCategory]>? { get set }
+    var allTrackerCategoriesBinding: Binding<[TrackerCategory]>? { get set }
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>? { get set }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
-    func updateCategories()
+    func updateTrackers()
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
@@ -27,11 +27,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private let trackerCategoryStore: TrackerCategoryStore
     private let trackerRecordStore: TrackerRecordStore
     
-    private (set) var allCategories: [TrackerCategory]
-    private (set) var categories: [TrackerCategory] = []
+    private (set) var allTrackerCategories: [TrackerCategory]
+    private (set) var visibleTrackerCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord]
     
-    var allCategoriesBinding: Binding<[TrackerCategory]>?
+    var allTrackerCategoriesBinding: Binding<[TrackerCategory]>?
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
     
     init(
@@ -41,15 +41,20 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         self.trackerCategoryStore = trackerCategoryStore
         self.trackerRecordStore = trackerRecordStore
         
-        allCategories = trackerCategoryStore.categories
+        allTrackerCategories = trackerCategoryStore.categories
         completedTrackers = trackerRecordStore.trackerRecords
-        updateCategories()
+        updateTrackers()
         dateFormatter.dateFormat = "dd.MM.yy"
+        
+        
+        //trackerCategoryStore.clearDB()
+        //trackerRecordStore.clearDB()
+        //trackerCategoryStore.addNewTrackerCategory(MockData.category)
     }
     
-     func updateCategories(){
-        categories.removeAll()
-        allCategories.forEach {
+     func updateTrackers(){
+        visibleTrackerCategories.removeAll()
+        allTrackerCategories.forEach {
             var newTrackers: [Tracker] = []
             for tracker in $0.trackers {
                 if tracker.schedule.contains(where: { $0.rawValue == currentDate.dayNumberOfWeek() }) {
@@ -57,11 +62,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
                 }
             }
             if !newTrackers.isEmpty  {
-                categories.append(TrackerCategory(header: $0.header, trackers: newTrackers))
+                visibleTrackerCategories.append(TrackerCategory(header: $0.header, trackers: newTrackers))
             }
         }
         
-        allCategoriesBinding?(allCategories)
+        allTrackerCategoriesBinding?(allTrackerCategories)
     }
     
   
@@ -80,7 +85,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath) {
-        let trackerItem = categories[indexPath.section].trackers[indexPath.item]
+        let trackerItem = visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
         let currentDateString = dateFormatter.string(from: currentDate)
         
         var isMarked: Bool = false
@@ -126,7 +131,7 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     func createTracker(category: TrackerCategory) {
         var isExist = false
         var trackers: [Tracker] = []
-        for (index, i) in allCategories.enumerated() {
+        for (index, i) in allTrackerCategories.enumerated() {
             if i.header == category.header {
                 isExist = true
                 trackers.append(contentsOf: i.trackers)
@@ -134,13 +139,13 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
                 
                 let trackerCategory = TrackerCategory(header: i.header, trackers: trackers)
                 trackerCategoryStore.updateObject(trackerCategory: trackerCategory)
-                allCategories[index] = trackerCategory
+                allTrackerCategories[index] = trackerCategory
             }
         }
         if !isExist {
             trackerCategoryStore.addNewTrackerCategory(category)
-            allCategories.append(category)
+            allTrackerCategories.append(category)
         }
-        updateCategories()
+        updateTrackers()
     }
 }

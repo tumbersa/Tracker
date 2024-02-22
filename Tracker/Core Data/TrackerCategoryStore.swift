@@ -8,13 +8,23 @@
 import CoreData
 import UIKit
 
+struct TrackerCategoryStoreUpdate {
+    let insertedIndexes: IndexSet
+    let deletedIndexes: IndexSet
+    let updatedIndexes: IndexSet
+}
+
 final class TrackerCategoryStore: NSObject {
+    
+    private var insertedIndexes: IndexSet?
+    private var deletedIndexes: IndexSet?
+    private var updatedIndexes: IndexSet?
+    
     private let context: NSManagedObjectContext
     private let mapper: TrackerCategoryStoreMapper
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let request = TrackerCategoryCoreData.fetchRequest()
-        request.returnsObjectsAsFaults = false
         request.sortDescriptors = [NSSortDescriptor(key: "header", ascending: true)]
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: request,
@@ -22,9 +32,11 @@ final class TrackerCategoryStore: NSObject {
             sectionNameKeyPath: nil, cacheName: nil)
         
         try? fetchedResultsController.performFetch()
-        
+        fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
+    
+    weak var delegate: TrackerCategoryStoreDelegate?
     
     override init() {
         context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -32,9 +44,18 @@ final class TrackerCategoryStore: NSObject {
         super.init()
     }
     
+    var headers: [String] {
+        let objects = fetchedResultsController.fetchedObjects
+        var headers: [String] = []
+        objects?.forEach{ headers.append($0.header ?? "") }
+        return headers
+    }
+    
     var categories: [TrackerCategory] {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        
         var categories: [TrackerCategory] = []
-        let objects = fetchedResultsController.fetchedObjects ?? []
+        let objects: [TrackerCategoryCoreData] = (try? context.fetch(request)) ?? []
         
         objects.forEach{ trackerCategoryCoreData in
             let header = trackerCategoryCoreData.header ?? ""
@@ -103,4 +124,42 @@ final class TrackerCategoryStore: NSObject {
     }
 }
 
+extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexes = IndexSet()
+        deletedIndexes = IndexSet()
+        updatedIndexes = IndexSet()
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.didUpdate(update: TrackerCategoryStoreUpdate(
+            insertedIndexes: insertedIndexes  ?? IndexSet(),
+            deletedIndexes: deletedIndexes  ?? IndexSet(),
+            updatedIndexes: updatedIndexes ?? IndexSet()))
+        insertedIndexes = nil
+        deletedIndexes = nil
+        updatedIndexes = nil
+    }
 
+    
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?) {
+            switch type {
+            case .insert:
+                guard let newIndexPath else { return }
+                insertedIndexes?.insert(newIndexPath.row)
+            case .delete:
+                guard let indexPath else { return }
+                deletedIndexes?.insert(indexPath.row)
+            case .update:
+                guard let indexPath else { return }
+                updatedIndexes?.insert(indexPath.row)
+            default:
+                break
+            }
+    }
+}

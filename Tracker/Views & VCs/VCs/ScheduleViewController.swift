@@ -38,6 +38,7 @@ final class ScheduleViewController: UIViewController {
 
     private func configureVC() {
         view.backgroundColor = .systemBackground
+        navigationItem.setHidesBackButton(true, animated: true)
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Расписание"
         tableView.dataSource = self
@@ -88,7 +89,7 @@ final class ScheduleViewController: UIViewController {
             }
         }
         let secondaryString = DaysOfWeek.getShortenedDays(days: schedule)
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
         delegate?.passSchedule(schedule: schedule, secondaryString: secondaryString)
     }
     

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ModalChoiceVCDelegate: AnyObject {
-    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCState)
+    func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCMode)
 }
 
 final class ModalChoiceViewController: UIViewController {
