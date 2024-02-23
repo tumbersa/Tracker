@@ -8,13 +8,17 @@
 import UIKit
 import SnapKit
 
-enum ModalCreationTrackerVCState {
+enum ModalCreationTrackerVCMode {
     case habit
     case irregularEvent
 }
 
 protocol ModalCreationTrackerVCDelegate: AnyObject {
     func createTracker(category: TrackerCategory)
+}
+
+protocol CategoriesViewControllerDelegate: AnyObject {
+    func getNewCategory(categoryString: String)
 }
 
 final class CreationTrackerViewController: UIViewController {
@@ -69,18 +73,17 @@ final class CreationTrackerViewController: UIViewController {
     }()
     
     private let scrollView = UIScrollView()
-    
     private let iconPalleteCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    
     private let containerView = UIView()
     
-    private var state: ModalCreationTrackerVCState
+    private var mode: ModalCreationTrackerVCMode
     
     var schedule: [DaysOfWeek] = []
+    var categoryString: String = ""
     weak var delegate: ModalCreationTrackerVCDelegate?
     
-    init(state: ModalCreationTrackerVCState) {
-        self.state = state
+    init(mode: ModalCreationTrackerVCMode) {
+        self.mode = mode
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -92,6 +95,7 @@ final class CreationTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        hideKeyboardWhenTappedAround()
         configureVC()
         configureScrollView()
         
@@ -101,11 +105,12 @@ final class CreationTrackerViewController: UIViewController {
         configureButtons()
     }
     
+    
     private func configureVC(){
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.titleTextAttributes =
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = state == .habit ? "Новая привычка" : "Новое нерегулярное событие"
+        title = mode == .habit ? "Новая привычка" : "Новое нерегулярное событие"
     }
     
     private func configureScrollView(){
@@ -175,7 +180,7 @@ final class CreationTrackerViewController: UIViewController {
         
         tableView.rowHeight = 75
         let height: CGFloat
-        if state == .irregularEvent {
+        if mode == .irregularEvent {
             tableView.separatorColor = .systemBackground
             height = 75
         } else {
@@ -216,7 +221,7 @@ final class CreationTrackerViewController: UIViewController {
         guard fielsIsNotEmpty() else { return }
         
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))
-        if state == .irregularEvent {
+        if mode == .irregularEvent {
             schedule = [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
         }
         
@@ -239,7 +244,7 @@ final class CreationTrackerViewController: UIViewController {
     private func fielsIsNotEmpty() -> Bool {
         guard var flag = nameTextField.text?.isEmpty else { return false }
         flag.toggle()
-        if state == .habit {
+        if mode == .habit {
             if let cellFlag = tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text?.isEmpty {
                 flag = flag && !cellFlag
             } else { flag = false}
@@ -258,9 +263,11 @@ final class CreationTrackerViewController: UIViewController {
     }
 }
 
+
+//MARK: - UITableViewDataSource
 extension CreationTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        state == .irregularEvent ? 1 : 2
+        mode == .irregularEvent ? 1 : 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -272,14 +279,13 @@ extension CreationTrackerViewController: UITableViewDataSource {
         cell.detailTextLabel?.textColor = .gray
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         
-        if state == .irregularEvent {
+        if mode == .irregularEvent {
             cell.layer.cornerRadius = 16
             cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = "Домашний уют"
+            //cell.detailTextLabel?.text = "Домашний уют"
         } else {
             if indexPath.row == 0 {
                 cell.textLabel?.text = "Категория"
-                cell.detailTextLabel?.text = "Домашний уют"
                 cell.layer.cornerRadius = 16
                 cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             } else {
@@ -294,19 +300,25 @@ extension CreationTrackerViewController: UITableViewDataSource {
     
 }
 
+//MARK: - UITableViewDelegate
 extension CreationTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 1 {
             let vc = ScheduleViewController()
             vc.schedule = self.schedule
             vc.delegate = self
-            present(UINavigationController(rootViewController: vc) ,animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         } else {
+            let vc = CategoriesViewController(viewModel: CategoriesViewModel())
+            vc.delegate = self
+            vc.categoryString = self.categoryString
+            navigationController?.pushViewController(vc, animated: true)
             tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: true)
         }
     }
 }
 
+//MARK: - ScheduleVCDelegate
 extension CreationTrackerViewController: ScheduleVCDelegate {
     func passSchedule(schedule: [DaysOfWeek], secondaryString: String) {
         self.schedule = schedule
@@ -317,6 +329,8 @@ extension CreationTrackerViewController: ScheduleVCDelegate {
     }
 }
 
+//MARK: - UITextFieldDelegate
+
 extension CreationTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         changeCreateButtonColor()
@@ -324,6 +338,7 @@ extension CreationTrackerViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - UICollectionViewDataSource
 extension CreationTrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         2
@@ -353,6 +368,7 @@ extension CreationTrackerViewController: UICollectionViewDataSource {
     }
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
 extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         0
@@ -427,3 +443,10 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     
 }
 
+extension CreationTrackerViewController: CategoriesViewControllerDelegate {
+    func getNewCategory(categoryString: String) {
+        let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))
+        cell?.detailTextLabel?.text = categoryString
+        self.categoryString = categoryString
+    }
+}

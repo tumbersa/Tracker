@@ -7,6 +7,8 @@
 
 import UIKit
 
+protocol SomeData {}
+
 final class TrackerCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "TrackerCollectionCell"
@@ -119,3 +121,5 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         ])
     }
 }
+
+extension TrackerCollectionViewCell: SomeData {}

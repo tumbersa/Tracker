@@ -65,7 +65,7 @@ final class TrackerRecordStore: NSObject {
         (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
     }
     
-    private func clearDB() {
+    func clearDB() {
         // create the delete request for the specified entity
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
