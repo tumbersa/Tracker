@@ -194,10 +194,11 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         movedIndexes = nil
         updatedIndexes = nil
         
-        
-        NotificationCenter.default.post(
-            name: NSNotification.Name.didChangeTrackers,
-            object: self, userInfo: ["Type" : typeUpdate as Any])
+        if delegate != nil {
+            NotificationCenter.default.post(
+                name: NSNotification.Name.didChangeTrackers,
+                object: self, userInfo: ["Type" : typeUpdate as Any])
+        }
         typeUpdate = nil
     }
 

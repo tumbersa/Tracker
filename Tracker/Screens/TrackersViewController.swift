@@ -142,7 +142,9 @@ final class TrackersViewController: UIViewController {
                 cell.plusButton.alpha = 0.3
             }
             
-            cell.countDaysLabel.text = DaysOfWeek.printDaysMessage(countDayRecord)
+            cell.countDaysLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("numberOfDays", comment: "Number of days"),
+                countDayRecord)
         }
        
         

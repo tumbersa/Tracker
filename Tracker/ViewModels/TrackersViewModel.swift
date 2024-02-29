@@ -24,7 +24,6 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private let dateFormatter = DateFormatter()
     var currentDate: Date = Date()
     
-    private var observer: NSObjectProtocol?
     private let trackerCategoryStore: TrackerCategoryStore
     private let trackerRecordStore: TrackerRecordStore
     
@@ -55,7 +54,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     }
     
     private func configureObserver(){
-        observer = NotificationCenter.default.addObserver(
+        NotificationCenter.default.addObserver(
             forName: NSNotification.Name.didChangeTrackers,
             object: nil, queue: .main) { [weak self] notification in
                 guard let self else { return }
@@ -146,8 +145,6 @@ final class TrackersViewModel: TrackersViewModelProtocol {
 extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     func createTracker(category: TrackerCategory) {
         
-        NotificationCenter.default.removeObserver(observer as Any)
-        
         var trackers: [Tracker] = []
         allTrackerCategories = trackerCategoryStore.categories
         for (index, i) in allTrackerCategories.enumerated() {
@@ -162,7 +159,5 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
             }
         }
         updateTrackers()
-        
-        configureObserver()
     }
 }
