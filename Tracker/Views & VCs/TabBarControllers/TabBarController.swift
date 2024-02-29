@@ -43,11 +43,15 @@ final class TabBarController: UITabBarController {
         tabBar.unselectedItemTintColor = .gray
         
         let trackerVC = TrackersViewController(viewModel: TrackersViewModel())
-        trackerVC.title = "Трекеры"
-        trackerVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .trTabbarItemTracker), tag: 0)
+        let trackersStr = NSLocalizedString("trackers", comment: "")
+        trackerVC.title = trackersStr
+        trackerVC.tabBarItem = UITabBarItem(title: trackersStr, image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         
         let statsVC = StatisticsViewController()
-        statsVC.tabBarItem =  UITabBarItem(title: "Статистика", image: UIImage(resource: .trTabbarItemStats), tag: 1)
+        statsVC.tabBarItem =  UITabBarItem(
+            title: NSLocalizedString("statistics", comment: ""),
+            image: UIImage(resource: .trTabbarItemStats),
+            tag: 1)
         viewControllers = [UINavigationController(rootViewController: trackerVC), statsVC]
     }
 }

@@ -21,19 +21,19 @@ enum DaysOfWeek: Int, Codable {
         for index in days.indices {
             switch days[index] {
             case .monday:
-                returnString += "Пн"
+                returnString += NSLocalizedString("mondayAbbreviation", comment: "")
             case .tuesday:
-                returnString += "Вт"
+                returnString += NSLocalizedString("tuesdayAbbreviation", comment: "")
             case .wednesday:
-                returnString += "Ср"
+                returnString += NSLocalizedString("wednesdayAbbreviation", comment: "")
             case .thursday:
-                returnString += "Чт"
+                returnString += NSLocalizedString("thursdayAbbreviation", comment: "")
             case .friday:
-                returnString += "Пт"
+                returnString += NSLocalizedString("fridayAbbreviation", comment: "")
             case .saturday:
-                returnString += "Сб"
+                returnString += NSLocalizedString("saturdayAbbreviation", comment: "")
             case .sunday:
-                returnString += "Вс"
+                returnString += NSLocalizedString("sundayAbbreviation", comment: "")
             }
             if index != days.count - 1 {
                 returnString += ", "

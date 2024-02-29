@@ -1,0 +1,50 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Глеб Капустин on 29.02.2024.
+  
+*/
+"emptyState.title" = "What will we track?";
+"trackers" = "Trackers";
+"statistics" = "Statistics";
+
+"habit" = "Habit";
+"irregularEvent" = "Irregular event";
+"creatingTracker" = "Creating a tracker";
+
+"nameTrackerTextField.placeholder" = "Enter tracker name";
+"create" = "Create";
+"cancel" = "Cancel";
+"newHabit" = "New habit";
+"newIrregularEvent" = "New irregular event";
+"category" = "Category";
+"schedule" = "Schedule";
+"color" = "Color";
+
+"ready" = "Ready";
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+
+"mondayAbbreviation" = "Mon";
+"tuesdayAbbreviation" = "Tue";
+"wednesdayAbbreviation" = "Wed";
+"thursdayAbbreviation" = "Thu";
+"fridayAbbreviation" = "Fri";
+"saturdayAbbreviation" = "Sat";
+"sundayAbbreviation" = "Sun";
+
+"categories.EmptyState.title" = "Habits and events \ncan be combined by meaning";
+"addCategory" = "Add category";
+"delete" = "Delete";
+"edit" = "Edit";
+"categories.alert.title" = "Are you sure this category is not needed? All its trackers will be deleted";
+
+"newCategory" = "New category";
+"editingCategory" = "Editing a category";
+"nameCategoryTextField.placeholder" = "Enter category name";

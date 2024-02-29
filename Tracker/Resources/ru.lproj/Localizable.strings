@@ -1,0 +1,50 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Глеб Капустин on 29.02.2024.
+  
+*/
+"emptyState.title" = "Что будем отслеживать?";
+"trackers" = "Трекеры";
+"statistics" = "Статистика";
+
+"habit" = "Привычка";
+"irregularEvent" = "Нерегулярное событие";
+"creatingTracker" = "Создание трекера";
+
+"nameTrackerTextField.placeholder" = "Введите название трекера";
+"create" = "Создать";
+"cancel" = "Отменить";
+"newHabit" = "Новая привычка";
+"newIrregularEvent" = "Новое нерегулярное событие";
+"category" = "Категория";
+"schedule" = "Расписание";
+"color" = "Цвет";
+
+"ready" = "Готово";
+"monday" = "Понедельник";
+"tuesday" = "Вторник";
+"wednesday" = "Среда";
+"thursday" = "Четверг";
+"friday" = "Пятница";
+"saturday" = "Суббота";
+"sunday" = "Воскресенье";
+
+"mondayAbbreviation" = "Пн";
+"tuesdayAbbreviation" = "Вт";
+"wednesdayAbbreviation" = "Ср";
+"thursdayAbbreviation" = "Чт";
+"fridayAbbreviation" = "Пт";
+"saturdayAbbreviation" = "Сб";
+"sundayAbbreviation" = "Вс";
+
+"categories.EmptyState.title" = "Привычки и события можно \nобъединить по смыслу";
+"addCategory" = "Добавить категорию";
+"delete" = "Удалить";
+"edit" = "Редактировать";
+"categories.alert.title" = "Эта категория точно не нужна? Все её трекеры удалятся";
+
+"newCategory" = "Новая категория";
+"editingCategory" = "Редактирование категории";
+"nameCategoryTextField.placeholder" = "Введите название категории";

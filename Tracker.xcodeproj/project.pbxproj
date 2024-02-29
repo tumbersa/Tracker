@@ -49,6 +49,7 @@
 		A4E9D52B2B4FD010002FCDDC /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E9D52A2B4FD010002FCDDC /* TrackerRecord.swift */; };
 		A4F95FD82B90913000E9D2E1 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = A4F95FDA2B90913000E9D2E1 /* Localizable.stringsdict */; };
 		A4F95FE52B90A00200E9D2E1 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = A4F95FE42B90A00200E9D2E1 /* .gitignore */; };
+		A4F95FE82B90B1DD00E9D2E1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A4F95FEA2B90B1DD00E9D2E1 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +98,8 @@
 		A4F95FD92B90913000E9D2E1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		A4F95FDB2B90913100E9D2E1 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		A4F95FE42B90A00200E9D2E1 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		A4F95FE92B90B1DD00E9D2E1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A4F95FEB2B90B1DF00E9D2E1 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,14 +125,14 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
-		A422EBF62B4DBC5F00716981 /* Views */ = {
+		A422EBF62B4DBC5F00716981 /* Views & VCs */ = {
 			isa = PBXGroup;
 			children = (
 				A433C9A82B594E0800D0BCC2 /* Views */,
 				A433C9A72B594DFD00D0BCC2 /* Cells */,
 				A433C9A52B594D9C00D0BCC2 /* TabBarControllers */,
 			);
-			path = Views;
+			path = "Views & VCs";
 			sourceTree = "<group>";
 		};
 		A422EBF72B4DBC7E00716981 /* Screens */ = {
@@ -233,7 +236,7 @@
 				A422EBFF2B4DCB8400716981 /* Models */,
 				A422EBFA2B4DC7A900716981 /* Extensions */,
 				A422EBF72B4DBC7E00716981 /* Screens */,
-				A422EBF62B4DBC5F00716981 /* Views */,
+				A422EBF62B4DBC5F00716981 /* Views & VCs */,
 				A422EBF12B4DAEAB00716981 /* Support */,
 				A43CDEB32B4C000F002D0064 /* Info.plist */,
 			);
@@ -300,6 +303,7 @@
 			isa = PBXGroup;
 			children = (
 				A4F95FDA2B90913000E9D2E1 /* Localizable.stringsdict */,
+				A4F95FEA2B90B1DD00E9D2E1 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -369,6 +373,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F95FE82B90B1DD00E9D2E1 /* Localizable.strings in Resources */,
 				A4F95FE52B90A00200E9D2E1 /* .gitignore in Resources */,
 				A43CDEB22B4C000F002D0064 /* LaunchScreen.storyboard in Resources */,
 				A43CDEAF2B4C000F002D0064 /* Assets.xcassets in Resources */,
@@ -442,6 +447,15 @@
 				A4F95FDB2B90913100E9D2E1 /* ru */,
 			);
 			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
+		A4F95FEA2B90B1DD00E9D2E1 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A4F95FE92B90B1DD00E9D2E1 /* en */,
+				A4F95FEB2B90B1DF00E9D2E1 /* ru */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -36,7 +36,7 @@ final class CreationTrackerViewController: UIViewController {
         let spacerView = UIView(frame:CGRect(x:0, y:0, width:16, height:nameTextField.bounds.height))
         nameTextField.leftViewMode = .always
         nameTextField.leftView = spacerView
-        nameTextField.placeholder = "Введите название трекера"
+        nameTextField.placeholder = NSLocalizedString("nameTrackerTextField.placeholder", comment: "")
         return nameTextField
     }()
     
@@ -55,7 +55,7 @@ final class CreationTrackerViewController: UIViewController {
         createButton.layer.cornerRadius = 16
         createButton.backgroundColor = .gray
         createButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
         createButton.tintColor = .white
         return createButton
     }()
@@ -67,7 +67,7 @@ final class CreationTrackerViewController: UIViewController {
         cancelButton.layer.borderWidth = 1
         cancelButton.layer.borderColor = UIColor.red.cgColor
         cancelButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         cancelButton.setTitleColor(.red, for: .normal)
         return cancelButton
     }()
@@ -110,7 +110,9 @@ final class CreationTrackerViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.titleTextAttributes =
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = mode == .habit ? "Новая привычка" : "Новое нерегулярное событие"
+        let newHabitStr = NSLocalizedString("newHabit", comment: "")
+        let newIrregularEventStr = NSLocalizedString("newIrregularEvent", comment: "")
+        title = mode == .habit ? newHabitStr : newIrregularEventStr
     }
     
     private func configureScrollView(){
@@ -279,17 +281,17 @@ extension CreationTrackerViewController: UITableViewDataSource {
         cell.detailTextLabel?.textColor = .gray
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         
+        let categoryStr = NSLocalizedString("category", comment: "")
         if mode == .irregularEvent {
             cell.layer.cornerRadius = 16
-            cell.textLabel?.text = "Категория"
-            //cell.detailTextLabel?.text = "Домашний уют"
+            cell.textLabel?.text = categoryStr
         } else {
             if indexPath.row == 0 {
-                cell.textLabel?.text = "Категория"
+                cell.textLabel?.text = categoryStr
                 cell.layer.cornerRadius = 16
                 cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             } else {
-                cell.textLabel?.text = "Расписание"
+                cell.textLabel?.text = NSLocalizedString("schedule", comment: "")
                 cell.layer.cornerRadius = 16
                 cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
                 cell.separatorInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: CGFloat.greatestFiniteMagnitude/2.0)
@@ -391,7 +393,8 @@ extension CreationTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerSupplementaryView.reuseID, for: indexPath) as! TrackerSupplementaryView
         
-        let headerString = indexPath.section == 0 ? "Emoji" : "Цвет"
+        let colorStr = NSLocalizedString("color", comment: "")
+        let headerString = indexPath.section == 0 ? "Emoji" : colorStr
         view.set(text:  headerString, isIcon: true)
         return view
     }

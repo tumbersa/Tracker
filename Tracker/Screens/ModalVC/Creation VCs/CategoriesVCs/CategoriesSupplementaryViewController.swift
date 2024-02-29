@@ -14,7 +14,6 @@ enum CategoriesSupplementaryVCMode {
 
 final class CategoriesSupplementaryViewController: UIViewController {
 
-    
     private let mode: CategoriesSupplementaryVCMode
     weak var delegate: CategoriesSupplementaryVCDelegate?
     
@@ -34,7 +33,7 @@ final class CategoriesSupplementaryViewController: UIViewController {
         let readyButton = UIButton()
         readyButton.backgroundColor = .gray
         readyButton.layer.cornerRadius = 16
-        readyButton.setTitle("Готово", for: .normal)
+        readyButton.setTitle(NSLocalizedString("ready", comment: ""), for: .normal)
         readyButton.isUserInteractionEnabled = false
         readyButton.addTarget(self, action: #selector(dismissVC), for: .touchUpInside)
         return readyButton
@@ -65,13 +64,15 @@ final class CategoriesSupplementaryViewController: UIViewController {
         navigationItem.setHidesBackButton(true, animated: true)
         navigationController?.navigationBar.titleTextAttributes =
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = mode == .create ? "Новая категория" : "Редактирование категории"
+        let newCategoryStr = NSLocalizedString("newCategory", comment: "")
+        let editingCategoryStr = NSLocalizedString("editingCategory", comment: "")
+        title = mode == .create ? newCategoryStr : editingCategoryStr
         createCategoryTextField.delegate = self
     }
     
     private func configureTextField(){
         if mode == .create {
-            createCategoryTextField.placeholder = "Введите название категории"
+            createCategoryTextField.placeholder = NSLocalizedString("nameCategoryTextField.placeholder", comment: "")
         } else {
             createCategoryTextField.text = categoryForEdit
         }

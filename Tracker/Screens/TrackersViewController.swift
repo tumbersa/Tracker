@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let emptyStateLabel = UILabel()
-        emptyStateLabel.text = "Что будем отслеживать?"
+        emptyStateLabel.text = NSLocalizedString("emptyState.title", comment: "")
         emptyStateLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         emptyStateLabel.textAlignment = .center
         return emptyStateLabel

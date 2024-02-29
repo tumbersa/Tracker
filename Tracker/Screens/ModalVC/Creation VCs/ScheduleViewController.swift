@@ -18,7 +18,7 @@ final class ScheduleViewController: UIViewController {
     private let readyButton: UIButton = {
         let readyButton = UIButton()
         readyButton.backgroundColor = .trBlack
-        readyButton.setTitle("Готово", for: .normal)
+        readyButton.setTitle(NSLocalizedString("ready", comment: ""), for: .normal)
         readyButton.layer.cornerRadius = 16
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         return readyButton
@@ -40,7 +40,7 @@ final class ScheduleViewController: UIViewController {
         view.backgroundColor = .systemBackground
         navigationItem.setHidesBackButton(true, animated: true)
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Расписание"
+        title = NSLocalizedString("schedule", comment: "")
         tableView.dataSource = self
         tableView.delegate = self
     }
@@ -128,27 +128,27 @@ extension ScheduleViewController: UITableViewDataSource {
         switch indexPath.row {
         case 0:
             if schedule.contains(.monday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Понедельник"
+            cell.textLabel?.text = NSLocalizedString("monday", comment: "")
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         case 1:
             if schedule.contains(.tuesday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Вторник"
+            cell.textLabel?.text = NSLocalizedString("tuesday", comment: "")
         case 2:
             if schedule.contains(.wednesday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Среда"
+            cell.textLabel?.text = NSLocalizedString("wednesday", comment: "")
         case 3:
             if schedule.contains(.thursday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Четверг"
+            cell.textLabel?.text = NSLocalizedString("thursday", comment: "")
         case 4:
             if schedule.contains(.friday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Пятница"
+            cell.textLabel?.text = NSLocalizedString("friday", comment: "")
         case 5:
             if schedule.contains(.saturday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Суббота"
+            cell.textLabel?.text = NSLocalizedString("saturday", comment: "")
         case 6:
             if schedule.contains(.sunday) { cell.switchSetOn(true) }
-            cell.textLabel?.text = "Воскресенье"
+            cell.textLabel?.text = NSLocalizedString("sunday", comment: "")
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.separatorInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: CGFloat.greatestFiniteMagnitude/2.0)
