@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import AppMetricaCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,7 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         DaysValueTransformer.register()
-        
+        let configuration = AppMetricaConfiguration(apiKey: "ef501a87-a428-4f8d-ac72-db8384f6d28c")
+        AppMetrica.activate(with: configuration!)
         
         return true
     }

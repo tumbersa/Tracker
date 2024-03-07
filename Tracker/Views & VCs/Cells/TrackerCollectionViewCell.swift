@@ -13,7 +13,20 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "TrackerCollectionCell"
 
-    private let containerView: UIView = {
+    var isPinned = false {
+        didSet {
+            addOrRemovePinImageView()
+        }
+    }
+    
+    private lazy var pinImageView: UIImageView = {
+        let pinView =  UIImageView()
+        pinView.image = UIImage(systemName: "pin.fill")
+        pinView.tintColor = .white
+        return pinView
+    }()
+    
+    let containerView: UIView = {
         let containerView = UIView()
         containerView.layer.cornerRadius = 16
         containerView.clipsToBounds = true
@@ -74,11 +87,12 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(backgroundColor: UIColor,emoji: String, name: String) {
+    func set(backgroundColor: UIColor,emoji: String, name: String, isPinned: Bool) {
         plusButton.backgroundColor = backgroundColor
         containerView.backgroundColor = backgroundColor
         emojiLabel.text = emoji
         nameLabel.text = name
+        self.isPinned = isPinned
     }
     
     @objc func plusButtonTapped(){
@@ -119,6 +133,20 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
             nameLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
         ])
+    }
+    
+    private func addOrRemovePinImageView() {
+        if isPinned {
+            containerView.addSubviews(pinImageView)
+            NSLayoutConstraint.activate([
+                pinImageView.widthAnchor.constraint(equalToConstant: 24),
+                pinImageView.heightAnchor.constraint(equalToConstant: 24),
+                pinImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+                pinImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12)
+            ])
+        } else {
+            pinImageView.removeFromSuperview()
+        }
     }
 }
 

@@ -14,25 +14,31 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>? { get set }
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>? { get set }
+    var pinBinding: Binding<IndexPath>? { get set }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
     func updateTrackers()
+    func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath)
+    func unpinTracker(trackerID: UUID, indexPath: IndexPath)
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
     private let dateFormatter = DateFormatter()
     var currentDate: Date = Date()
+    private var indexPathForPin: IndexPath = IndexPath()
     
     private let trackerCategoryStore: TrackerCategoryStore
     private let trackerRecordStore: TrackerRecordStore
     
+    private var pinnedTrackersID: [UUID] = []
     private (set) var allTrackerCategories: [TrackerCategory]
     private (set) var visibleTrackerCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord]
     
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>?
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
+    var pinBinding: Binding<IndexPath>?
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
@@ -61,8 +67,11 @@ final class TrackersViewModel: TrackersViewModelProtocol {
                 if let dict = notification.userInfo as? [String : TrackerUpdateType],
                    let type = dict["Type"],
                    !(type == .insert) {
+                    if type == .updateIsPinned {
+                        pinBinding?(indexPathForPin)
+                    }
                     allTrackerCategories = trackerCategoryStore.categories
-                    self.updateTrackers()
+                    updateTrackers()
                 }
             }
     }
@@ -140,6 +149,17 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         
         completedTrackersBinding?((!isMarked, countDayRecord, someDataForBinding))
     }
+    
+    func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath) {
+        indexPathForPin = indexPath
+        trackerCategoryStore.pinTracker(trackerID: trackerID, nameCategory: nameCategory)
+    }
+    
+    func unpinTracker(trackerID: UUID, indexPath: IndexPath){
+        indexPathForPin = indexPath
+        trackerCategoryStore.unpinTracker(trackerID: trackerID)
+    }
+    
 }
 
 extension TrackersViewModel: ModalCreationTrackerVCDelegate {

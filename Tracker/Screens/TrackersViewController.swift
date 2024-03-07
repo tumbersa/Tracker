@@ -121,12 +121,13 @@ final class TrackersViewController: UIViewController {
         vcToShow.delegate = self
         present(UINavigationController(rootViewController: vcToShow), animated: true)
     }
-
     
     private func configureVC(){
+        //MARK: - clousers viewModel
         viewModel.allTrackerCategoriesBinding = { [weak self] _ in
             guard let self else { return }
             collectionView.reloadData()
+            
             configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
         }
         
@@ -147,6 +148,13 @@ final class TrackersViewController: UIViewController {
                 countDayRecord)
         }
        
+        viewModel.pinBinding = {[weak self] indexPath in
+            guard let self else { return }
+            if let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
+                cell.isPinned.toggle()
+            }
+        }
+        
         
         view.backgroundColor = .systemBackground
         dateFormatter.dateFormat = "dd.MM.yy"
@@ -170,6 +178,8 @@ final class TrackersViewController: UIViewController {
         
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.reuseID)
+        
+        
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -224,10 +234,19 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         cell.delegate = self
-        let trackerItem = viewModel.visibleTrackerCategories[indexPath.section].trackers[indexPath.item]
+        let category = viewModel.visibleTrackerCategories[indexPath.section]
+        let trackerItem = category.trackers[indexPath.item]
         viewModel.setInitialStateButton(someDataForBinding: cell, trackerItem: trackerItem)
         
-        cell.set(backgroundColor: trackerItem.color, emoji: trackerItem.emoji, name: trackerItem.name)
+        var isPinned = false
+        if category.header == "Закрепленные" {
+            isPinned = true
+        }
+        cell.set(
+            backgroundColor: trackerItem.color,
+            emoji: trackerItem.emoji,
+            name: trackerItem.name,
+            isPinned: isPinned)
         return cell
     }
 }
@@ -268,6 +287,53 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             height: UIView.layoutFittingExpandedSize.height),
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        if let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
+            return UITargetedPreview(view: cell.containerView)
+        }
+        return nil
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let indexPath = indexPaths.first else { return nil }
+        let category = viewModel.visibleTrackerCategories[indexPath.section]
+        let tracker = category.trackers[indexPath.item]
+        let id = tracker.id
+        
+        var pinAction: UIAction = UIAction(handler: {_ in })
+        
+        if let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
+            if !cell.isPinned {
+                pinAction = UIAction(title: "Закрепить") { [weak self] _ in
+                    guard let self else { return }
+                    viewModel.pinTracker(trackerID: id, nameCategory: category.header, indexPath: indexPath)
+                }
+            } else {
+                pinAction = UIAction(title: "Открепить") { [weak self] _ in
+                    guard let self else { return }
+                    viewModel.unpinTracker(trackerID: id, indexPath: indexPath)
+                }
+            }
+        }
+        let editAction = UIAction(title: "Редактировать") { _ in
+            
+        }
+        
+        let deleteStr = "Удалить"
+        let deleteAction = UIAction(title: deleteStr) { _ in
+            
+        }
+        
+        let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
+        let attributedTitle = NSAttributedString(string: deleteStr, attributes: redColorAttribute)
+        
+        deleteAction.setValue(attributedTitle, forKey: "attributedTitle")
+        return UIContextMenuConfiguration(actionProvider:  { _ in
+            UIMenu(children: [pinAction, editAction, deleteAction])
+        })
     }
 }
 

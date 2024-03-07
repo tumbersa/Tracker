@@ -13,6 +13,7 @@ enum TrackerUpdateType {
     case edit
     case update
     case delete
+    case updateIsPinned
 }
 
 struct TrackerCategoryStoreUpdate {
@@ -167,6 +168,70 @@ final class TrackerCategoryStore: NSObject {
             print(error.localizedDescription)
         }
     }
+    
+    func pinTracker(trackerID: UUID, nameCategory: String) {
+        let pinnedHeader = "Закрепленные"
+        let pinnedCategoryCD = getCategoryCD(header: pinnedHeader)
+        
+        let requestTracker = TrackerCategoryCoreData.fetchRequest()
+        requestTracker.predicate = NSPredicate(format: "ANY trackers.id == %@", trackerID as CVarArg)
+        
+        let trackerCategoryCD = (try? context.fetch(requestTracker))?.first
+        if let trackerCD = (trackerCategoryCD?.trackers?.allObjects as? [TrackerCoreData])?
+            .filter({ $0.id == trackerID }).first {
+            
+            trackerCD.prevCategoryName = nameCategory
+            trackerCategoryCD?.removeFromTrackers(trackerCD)
+            trackerCD.trackerCategory = pinnedCategoryCD
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+            
+            typeUpdate = .updateIsPinned
+            postUpdate()
+        }
+    }
+    
+    private func getCategoryCD(header: String) -> TrackerCategoryCoreData {
+       
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "header == %@", header)
+        let categoryCD = (try? context.fetch(request))?.first
+        
+        if let categoryCD {
+            return categoryCD
+        } else {
+            let newCategoryCD = TrackerCategoryCoreData(context: context)
+            newCategoryCD.header = header
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+            return newCategoryCD
+        }
+    }
+    
+    func unpinTracker(trackerID: UUID) {
+        let requestTracker = TrackerCategoryCoreData.fetchRequest()
+        requestTracker.predicate = NSPredicate(format: "ANY trackers.id == %@", trackerID as CVarArg)
+        
+        let trackerCategoryCD = (try? context.fetch(requestTracker))?.first
+        if let trackerCD = (trackerCategoryCD?.trackers?.allObjects as? [TrackerCoreData])?
+            .filter({ $0.id == trackerID }).first {
+            
+            let prevCategoryName = trackerCD.prevCategoryName ?? ""
+            let prevCategoryCD = getCategoryCD(header: prevCategoryName)
+            
+            trackerCD.prevCategoryName = nil
+            trackerCategoryCD?.removeFromTrackers(trackerCD)
+            trackerCD.trackerCategory = prevCategoryCD
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+            
+            typeUpdate = .updateIsPinned
+            postUpdate()
+        }
+    }
+    
+    private func postUpdate(){
+        NotificationCenter.default.post(
+            name: NSNotification.Name.didChangeTrackers,
+            object: self, userInfo: ["Type" : typeUpdate as Any])
+    }
 }
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
@@ -175,7 +240,6 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         deletedIndexes = IndexSet()
         updatedIndexes = IndexSet()
         movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
-        typeUpdate = .insert
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -195,9 +259,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         updatedIndexes = nil
         
         if delegate != nil {
-            NotificationCenter.default.post(
-                name: NSNotification.Name.didChangeTrackers,
-                object: self, userInfo: ["Type" : typeUpdate as Any])
+           postUpdate()
         }
         typeUpdate = nil
     }
