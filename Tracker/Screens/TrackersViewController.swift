@@ -318,13 +318,36 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                 }
             }
         }
-        let editAction = UIAction(title: "Редактировать") { _ in
+        let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+            guard let self else { return }
+            let vc = DetailedTrackerViewController(
+                trackerForEdit: tracker,
+                headerCategoryForEdit: category.header,
+                recordCount: viewModel.getRecordCount(id: tracker.id))
             
+            vc.delegate = viewModel
+            present(UINavigationController(rootViewController: vc), animated: true)
         }
         
         let deleteStr = "Удалить"
-        let deleteAction = UIAction(title: deleteStr) { _ in
+        let deleteAction = UIAction(title: deleteStr) { [weak self] _ in
+            guard let self else { return }
+            let alert = UIAlertController(
+                title: nil,
+                message: "Уверены, что хотите удалить этот трекер?",
+                preferredStyle: .actionSheet)
             
+            let deleteAlertAction = UIAlertAction(title: deleteStr, style: .destructive) { [weak self] _ in
+                guard let self else { return }
+                viewModel.deleteTracker(trackerID: id)
+            }
+            
+            let cancelAlertAction = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) {_ in
+            }
+            
+            alert.addAction(deleteAlertAction)
+            alert.addAction(cancelAlertAction)
+            present(alert, animated: true)
         }
         
         let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
@@ -353,7 +376,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 extension TrackersViewController: ModalChoiceVCDelegate {
     func showCreationTrackerVC(vc: UIViewController, state: ModalCreationTrackerVCMode) {
         vc.dismiss(animated: true)
-        let vc = CreationTrackerViewController(mode: state)
+        let vc = DetailedTrackerViewController(mode: state)
         vc.delegate = viewModel
         present(UINavigationController(rootViewController: vc), animated: true)
     }

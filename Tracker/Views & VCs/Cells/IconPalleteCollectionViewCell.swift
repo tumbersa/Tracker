@@ -11,7 +11,7 @@ class IconPaletteEmojiCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "IconPalleteEmojiCell"
     
-    private let emojiLabel: UILabel = UILabel()
+    private lazy var emojiLabel: UILabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

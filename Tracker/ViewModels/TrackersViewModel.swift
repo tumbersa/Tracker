@@ -19,8 +19,11 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
     func updateTrackers()
+    func getRecordCount(id: UUID) -> Int 
+    
     func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath)
     func unpinTracker(trackerID: UUID, indexPath: IndexPath)
+    func deleteTracker(trackerID: UUID)
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
@@ -160,6 +163,13 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         trackerCategoryStore.unpinTracker(trackerID: trackerID)
     }
     
+    func getRecordCount(id: UUID) -> Int {
+        completedTrackers.filter{ $0.id == id }.count
+    }
+    
+    func deleteTracker(trackerID: UUID) {
+        trackerCategoryStore.deleteTracker(trackerID: trackerID)
+    }
 }
 
 extension TrackersViewModel: ModalCreationTrackerVCDelegate {
@@ -179,5 +189,9 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
             }
         }
         updateTrackers()
+    }
+    
+    func updateTracker(category: TrackerCategory) {
+        trackerCategoryStore.updateTracker(category: category)
     }
 }

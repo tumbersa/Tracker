@@ -31,7 +31,6 @@ final class TrackerCategoryStore: NSObject {
     
     static let shared = TrackerCategoryStore()
     
-    
     private var typeUpdate: TrackerUpdateType?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
@@ -43,6 +42,7 @@ final class TrackerCategoryStore: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "header != %@", "Закрепленные")
         request.sortDescriptors = [NSSortDescriptor(key: "header", ascending: true)]
         let fetchedResultsController = NSFetchedResultsController(
             fetchRequest: request,
@@ -70,10 +70,17 @@ final class TrackerCategoryStore: NSObject {
     }
     
     var categories: [TrackerCategory] {
-        let request = TrackerCategoryCoreData.fetchRequest()
-        
         var categories: [TrackerCategory] = []
-        let objects: [TrackerCategoryCoreData] = (try? context.fetch(request)) ?? []
+        
+        let fetchRequestPinned = TrackerCategoryCoreData.fetchRequest()
+        fetchRequestPinned.predicate = NSPredicate(format: "ANY trackers.prevCategoryName != nil")
+        var objects: [TrackerCategoryCoreData] = (try? context.fetch(fetchRequestPinned)) ?? []
+        
+        let fetchRequestDefault = TrackerCategoryCoreData.fetchRequest()
+        let sortByHeader = NSSortDescriptor(key: "header", ascending: true)
+        fetchRequestDefault.predicate = NSPredicate(format: "ANY trackers.prevCategoryName = nil")
+        fetchRequestDefault.sortDescriptors = [sortByHeader]
+        objects.append(contentsOf: (try? context.fetch(fetchRequestDefault)) ?? [])
         
         objects.forEach{ trackerCategoryCoreData in
             let header = trackerCategoryCoreData.header ?? ""
@@ -99,19 +106,38 @@ final class TrackerCategoryStore: NSObject {
         (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
     }
     
-    private func updateExistingTrackerCategory(trackerCategoryCoreData: TrackerCategoryCoreData, trackerCategory: TrackerCategory){
-        trackerCategoryCoreData.header = trackerCategory.header
+    private func updateExistingTrackerCategory(trackerCategoryCoreData: TrackerCategoryCoreData, trackerCategory: TrackerCategory, isEditTracker: Bool = false){
         
-        let trackersCoreData =  trackerCategory.trackers.map {
+        let newTrackersCoreData = trackerCategory.trackers.map {
             mapper.trackerCoreData(from: $0, context: context)
         }
         
         let oldTrackers = (trackerCategoryCoreData.trackers?.allObjects as? [TrackerCoreData]) ?? []
-        trackersCoreData.forEach {
-            let uuids: [UUID?] = oldTrackers.map{ $0.id }
-            if !uuids.contains($0.id) {
-                trackerCategoryCoreData.addToTrackers($0)
-                $0.trackerCategory = trackerCategoryCoreData
+        if !isEditTracker {
+            trackerCategoryCoreData.header = trackerCategory.header
+            
+            newTrackersCoreData.forEach {
+                let uuids: [UUID?] = oldTrackers.map{ $0.id }
+                if !uuids.contains($0.id) {
+                    trackerCategoryCoreData.addToTrackers($0)
+                    $0.trackerCategory = trackerCategoryCoreData
+                }
+            }
+        } else {
+            guard let trackerForUpdate = newTrackersCoreData.first else { return }
+            oldTrackers.forEach{
+                guard let oldTrackerID = $0.id, let trackerForUpdateID = trackerForUpdate.id else { return }
+                if oldTrackerID == trackerForUpdateID {
+                    mapper.updateExistingTracker(oldTrackerCD: $0, newTrackerCD: trackerForUpdate)
+                }
+                
+                if trackerCategoryCoreData.header != trackerCategory.header {
+                    if let trackerCD = (trackerCategoryCoreData.trackers?.allObjects as? [TrackerCoreData])?
+                        .filter({ $0.id == trackerForUpdateID }).first {
+                        trackerCategoryCoreData.removeFromTrackers(trackerCD)
+                    }
+                    updateObject(trackerCategory: trackerCategory)
+                }
             }
         }
     }
@@ -120,9 +146,7 @@ final class TrackerCategoryStore: NSObject {
         let request = TrackerCategoryCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "header == %@", trackerCategory.header)
         if let trackerCategoryCoreData = try? context.fetch(request).first {
-            
             updateExistingTrackerCategory(trackerCategoryCoreData: trackerCategoryCoreData, trackerCategory: trackerCategory)
-            
             (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
         }
     }
@@ -231,6 +255,36 @@ final class TrackerCategoryStore: NSObject {
         NotificationCenter.default.post(
             name: NSNotification.Name.didChangeTrackers,
             object: self, userInfo: ["Type" : typeUpdate as Any])
+    }
+    
+    func updateTracker(category: TrackerCategory) {
+        guard let trackerID = category.trackers.first?.id else { return }
+        
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY trackers.id == %@", trackerID as CVarArg)
+        
+        if let trackerCategoryCoreData = try? context.fetch(request).first {
+            updateExistingTrackerCategory(trackerCategoryCoreData: trackerCategoryCoreData, trackerCategory: category, isEditTracker: true)
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+            typeUpdate = .update
+            postUpdate()
+        }
+    }
+    
+    func deleteTracker(trackerID: UUID) {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "ANY trackers.id == %@", trackerID as CVarArg)
+        
+        if let trackerCategoryCoreData = try? context.fetch(request).first {
+            if let trackerCD = (trackerCategoryCoreData.trackers?.allObjects as? [TrackerCoreData])?
+                .filter({ $0.id == trackerID }).first {
+                trackerCategoryCoreData.removeFromTrackers(trackerCD)
+                context.delete(trackerCD)
+            }
+            (UIApplication.shared.delegate as! AppDelegate).saveContext(context: context)
+            typeUpdate = .update
+            postUpdate()
+        }
     }
 }
 
