@@ -52,6 +52,6 @@ final class TabBarController: UITabBarController {
             title: NSLocalizedString("statistics", comment: ""),
             image: UIImage(resource: .trTabbarItemStats),
             tag: 1)
-        viewControllers = [UINavigationController(rootViewController: trackerVC), statsVC]
+        viewControllers = [UINavigationController(rootViewController: trackerVC), UINavigationController(rootViewController: statsVC)]
     }
 }

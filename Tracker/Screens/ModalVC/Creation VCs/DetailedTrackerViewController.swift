@@ -439,6 +439,10 @@ extension DetailedTrackerViewController: UITextFieldDelegate {
         changeSaveButtonColor()
         return textField.resignFirstResponder()
     }
+    //если клавиатура была убрана без клавиши return 
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        changeSaveButtonColor()
+    }
 }
 
 //MARK: - UICollectionViewDataSource

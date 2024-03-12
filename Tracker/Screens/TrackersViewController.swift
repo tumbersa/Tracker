@@ -33,41 +33,8 @@ final class TrackersViewController: UIViewController {
         emptyStateLabel.textAlignment = .center
         return emptyStateLabel
     }()
-
-    private let patchView: UIView = {
-        let patchView = UIView()
-        patchView.backgroundColor = .systemBackground
-        patchView.isUserInteractionEnabled = false
-        patchView.translatesAutoresizingMaskIntoConstraints = false
-        return patchView
-    }()
     
-    private let patchLabel: UILabel = {
-        let patchLabel = UILabel()
-        patchLabel.backgroundColor = .trLightGray
-        patchLabel.layer.cornerRadius = 8
-        patchLabel.clipsToBounds = true
-        patchLabel.isUserInteractionEnabled = false
-        patchLabel.textAlignment = .center
-        patchLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        patchLabel.translatesAutoresizingMaskIntoConstraints = false
-        return patchLabel
-    }()
-    
-    private let datePicker: UIDatePicker = {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .compact
-        
-        let currentDate = Date()
-        let calendar = Calendar.current
-        let minDate = calendar.date(byAdding: .year, value: -10, to: currentDate)
-        let maxDate = calendar.date(byAdding: .year, value: 10, to: currentDate)
-        datePicker.minimumDate = minDate
-        datePicker.maximumDate = maxDate
-    
-        return datePicker
-    }()
+    private lazy var datePicker: TRDatePicker = TRDatePicker()
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UICollectionViewFlowLayout())
@@ -75,6 +42,14 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var filtersButton: UIButton = {
+        let filtersButton = UIButton()
+        filtersButton.backgroundColor = .trBlue
+        filtersButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        filtersButton.layer.cornerRadius = 16
+        filtersButton.setTitle("Фильтры", for: .normal)
+        return filtersButton
+    }()
 
     init(viewModel: TrackersViewModelProtocol) {
         self.viewModel = viewModel
@@ -90,30 +65,8 @@ final class TrackersViewController: UIViewController {
     
         configureVC()
         configureCollectionView()
-        configurePatchViews()
+        configureFiltersButton()
         configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
-    }
-
- 
-    private func configurePatchViews(){
-        let bar = navigationController!.navigationBar
-        bar.addSubview(patchView)
-        bar.bringSubviewToFront(patchView)
-        
-        patchLabel.text = dateFormatter.string(from: currentDate)
-        patchView.addSubview(patchLabel)
-    
-        NSLayoutConstraint.activate([
-            patchView.topAnchor.constraint(equalTo: bar.topAnchor, constant: 0),
-            patchView.trailingAnchor.constraint(equalTo: bar.trailingAnchor),
-            patchView.widthAnchor.constraint(equalToConstant: 188),
-            patchView.heightAnchor.constraint(equalToConstant: 44),
-            
-            patchLabel.widthAnchor.constraint(equalToConstant: 77),
-            patchLabel.trailingAnchor.constraint(equalTo: patchView.trailingAnchor, constant: -16),
-            patchLabel.topAnchor.constraint(equalTo: patchView.topAnchor, constant: 5),
-            patchLabel.bottomAnchor.constraint(equalTo: patchView.bottomAnchor, constant: -5)
-        ])
     }
     
     @objc private func actionAddBarItem(){
@@ -167,6 +120,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.leftBarButtonItem?.tintColor = .black
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        datePicker.set(text: dateFormatter.string(from: currentDate))
     }
     
     private func configureCollectionView(){
@@ -186,8 +140,7 @@ final class TrackersViewController: UIViewController {
         let selectedDate = sender.date
         let formattedDate = dateFormatter.string(from: selectedDate)
         viewModel.currentDate = selectedDate
-        patchLabel.text = formattedDate
-        
+        datePicker.set(text: formattedDate)
         
         viewModel.updateTrackers()
     }
@@ -213,7 +166,16 @@ final class TrackersViewController: UIViewController {
         }
     }
     
-   
+    private func configureFiltersButton() {
+        view.addSubviews(filtersButton)
+        
+        NSLayoutConstraint.activate([
+            filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filtersButton.widthAnchor.constraint(equalToConstant: 114),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+    }
 }
 
 //MARK: - UICollectionViewDataSource
