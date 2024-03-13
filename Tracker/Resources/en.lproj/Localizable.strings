@@ -48,3 +48,17 @@
 "newCategory" = "New category";
 "editingCategory" = "Editing a category";
 "nameCategoryTextField.placeholder" = "Enter category name";
+
+"filters" = "Filters";
+"trackersCompleted" = "Trackers completed";
+"statistics.EmptyState.title" = "There is nothing to analyze yet";
+
+"pinned" = "Pinned";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"deleteTracker.message" = "Are you sure you want to delete this tracker?";
+
+"allTrackers" = "All trackers";
+"trackersForToday" = "Trackers for today";
+"finished" = "Finished";
+"unfinished" = "Unfinished";

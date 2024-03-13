@@ -40,7 +40,7 @@ final class DetailedFiltersViewController: UIViewController {
     private func configureVC(){
         view.backgroundColor = .systemBackground
         
-        title = "Фильтры"
+        title = NSLocalizedString("Filters", comment: "")
     }
     
     private func configureTableView() {
@@ -83,15 +83,15 @@ extension DetailedFiltersViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            cell.textLabel?.text = "Все трекеры"
+            cell.textLabel?.text = NSLocalizedString("allTrackers", comment: "")
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         case 1:
-            cell.textLabel?.text = "Трекеры на сегодня"
+            cell.textLabel?.text = NSLocalizedString("trackersForToday", comment: "")
         case 2:
-            cell.textLabel?.text = "Завершенные"
+            cell.textLabel?.text = NSLocalizedString("finished", comment: "")
         case 3:
-            cell.textLabel?.text = "Не завершенные"
+            cell.textLabel?.text = NSLocalizedString("unfinished", comment: "")
             cell.layer.cornerRadius = 16
             cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.separatorInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: CGFloat.greatestFiniteMagnitude/2.0)

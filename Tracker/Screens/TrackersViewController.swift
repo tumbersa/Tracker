@@ -47,7 +47,8 @@ final class TrackersViewController: UIViewController {
         filtersButton.backgroundColor = .trBlue
         filtersButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         filtersButton.layer.cornerRadius = 16
-        filtersButton.setTitle("Фильтры", for: .normal)
+        let titleStr = NSLocalizedString("filters", comment: "")
+        filtersButton.setTitle(titleStr, for: .normal)
         return filtersButton
     }()
 
@@ -269,7 +270,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     //MARK: -Supplementary view
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TrackerSupplementaryView.reuseID, for: indexPath) as! TrackerSupplementaryView
-        view.set(text: viewModel.visibleTrackerCategories[indexPath.section].header)
+        var header = viewModel.visibleTrackerCategories[indexPath.section].header
+        if header == "Закрепленные" {
+            header = NSLocalizedString("pinned", comment: "")
+        }
+        view.set(text: header)
         return view
     }
     
@@ -302,18 +307,21 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         
         if let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
             if !cell.isPinned {
-                pinAction = UIAction(title: "Закрепить") { [weak self] _ in
+                pinAction = UIAction(title: NSLocalizedString("pin", comment: "")) { [weak self] _ in
                     guard let self else { return }
                     viewModel.pinTracker(trackerID: id, nameCategory: category.header, indexPath: indexPath)
                 }
             } else {
-                pinAction = UIAction(title: "Открепить") { [weak self] _ in
+                
+                pinAction = UIAction(title: NSLocalizedString("unpin", comment: "")) { [weak self] _ in
                     guard let self else { return }
                     viewModel.unpinTracker(trackerID: id, indexPath: indexPath)
                 }
             }
         }
-        let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+        
+        let editStr = NSLocalizedString("edit", comment: "")
+        let editAction = UIAction(title: editStr) { [weak self] _ in
             guard let self else { return }
             let vc = DetailedTrackerViewController(
                 trackerForEdit: tracker,
@@ -328,12 +336,12 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                                              AnalyticsKeysForParams.item : AnalyticsItems.edit])
         }
         
-        let deleteStr = "Удалить"
+        let deleteStr = NSLocalizedString("delete", comment: "")
         let deleteAction = UIAction(title: deleteStr) { [weak self] _ in
             guard let self else { return }
             let alert = UIAlertController(
                 title: nil,
-                message: "Уверены, что хотите удалить этот трекер?",
+                message: NSLocalizedString("deleteTracker.message", comment: ""),
                 preferredStyle: .actionSheet)
             
             let deleteAlertAction = UIAlertAction(title: deleteStr, style: .destructive) { [weak self] _ in

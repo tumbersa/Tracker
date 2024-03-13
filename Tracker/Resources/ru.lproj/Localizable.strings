@@ -48,3 +48,18 @@
 "newCategory" = "Новая категория";
 "editingCategory" = "Редактирование категории";
 "nameCategoryTextField.placeholder" = "Введите название категории";
+
+"filters" = "Фильтры";
+"trackersCompleted" = "Трекеров завершено";
+"statistics.EmptyState.title" = "Анализировать пока нечего";
+
+
+"pinned" = "Закрепленные";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"deleteTracker.message" = "Уверены, что хотите удалить этот трекер?";
+
+"allTrackers" = "Все трекеры";
+"trackersForToday" = "Трекеры на сегодня";
+"finished" = "Завершенные";
+"unfinished" = "Не завершенные";

@@ -19,7 +19,7 @@ final class StatisticsViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let emptyStateLabel = UILabel()
-        emptyStateLabel.text = "Анализировать пока нечего"
+        emptyStateLabel.text = NSLocalizedString("statistics.EmptyState.title", comment: "")
         emptyStateLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         emptyStateLabel.textAlignment = .center
         return emptyStateLabel
@@ -72,7 +72,7 @@ final class StatisticsViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Статистика"
+        title = NSLocalizedString("statistics", comment: "")
     }
     
     private func configureStatisticsView() {

@@ -25,7 +25,7 @@ final class StatisticsView: UIView {
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        titleLabel.text = "Трекеров завершено"
+        titleLabel.text = NSLocalizedString("trackersCompleted", comment: "")
         return titleLabel
     }()
     
