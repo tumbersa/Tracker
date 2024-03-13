@@ -73,17 +73,22 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        analyticsService.report(event: AnalyticsEvents.open, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        analyticsService.report(event: AnalyticsEvents.close, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
+
     }
     
     @objc private func actionAddBarItem(){
         let vcToShow = ModalChoiceViewController()
         vcToShow.delegate = self
         present(UINavigationController(rootViewController: vcToShow), animated: true)
+        analyticsService.report(event: AnalyticsEvents.click,
+                                params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
+                                         AnalyticsKeysForParams.item : AnalyticsItems.addTrack])
     }
     
     private func configureVC(){
@@ -135,7 +140,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func configureCollectionView(){
-        
         view.addSubview(collectionView)
         
         collectionView.dataSource = self
@@ -143,7 +147,6 @@ final class TrackersViewController: UIViewController {
         
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.reuseID)
         collectionView.register(TrackerSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackerSupplementaryView.reuseID)
-        
         
     }
     
@@ -179,7 +182,6 @@ final class TrackersViewController: UIViewController {
                 emptyStateLabel.heightAnchor.constraint(equalToConstant: 18)
             ])
         } else {
-            
             emptyStateLabel.removeFromSuperview()
             emptyStateImageView.removeFromSuperview()
         }
@@ -202,6 +204,10 @@ final class TrackersViewController: UIViewController {
         guard let viewModelForVC = viewModel as? FilterTrackersViewModelProtocol else { return }
         let vc = DetailedFiltersViewController(viewModel: viewModelForVC, filter: viewModel.curFilter)
         present(UINavigationController(rootViewController: vc), animated: true)
+        
+        analyticsService.report(event: AnalyticsEvents.click,
+                                params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
+                                         AnalyticsKeysForParams.item : AnalyticsItems.filter])
     }
 }
 
@@ -316,6 +322,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             
             vc.delegate = viewModel
             present(UINavigationController(rootViewController: vc), animated: true)
+            
+            analyticsService.report(event: AnalyticsEvents.click,
+                                    params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
+                                             AnalyticsKeysForParams.item : AnalyticsItems.edit])
         }
         
         let deleteStr = "Удалить"
@@ -337,6 +347,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             alert.addAction(deleteAlertAction)
             alert.addAction(cancelAlertAction)
             present(alert, animated: true)
+            
+            analyticsService.report(event: AnalyticsEvents.click,
+                                    params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
+                                             AnalyticsKeysForParams.item : AnalyticsItems.delete])
         }
         
         let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
@@ -375,6 +389,10 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         if let indexPath = collectionView.indexPath(for: cell) {
             viewModel.plusButtonTapped(someDataForBinding: cell, indexPath: indexPath)
         }
+        
+        analyticsService.report(event: AnalyticsEvents.click,
+                                params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
+                                         AnalyticsKeysForParams.item : AnalyticsItems.track])
     }
 }
 

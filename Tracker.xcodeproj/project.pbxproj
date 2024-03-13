@@ -11,6 +11,7 @@
 		A404B0972BA19FCA0068EBED /* AnalyticsEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B0962BA19FCA0068EBED /* AnalyticsEvents.swift */; };
 		A404B0992BA1A0000068EBED /* AnalyticsScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B0982BA1A0000068EBED /* AnalyticsScreens.swift */; };
 		A404B09D2BA1A03F0068EBED /* AnalyticsItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B09C2BA1A03F0068EBED /* AnalyticsItems.swift */; };
+		A404B09F2BA1A2470068EBED /* AnalyticsKeysForParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B09E2BA1A2470068EBED /* AnalyticsKeysForParams.swift */; };
 		A405FBA42BA1858B006A5C23 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A405FBA32BA1858B006A5C23 /* TrackerTests.swift */; };
 		A405FBAC2BA185E1006A5C23 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAB2BA185E1006A5C23 /* InlineSnapshotTesting */; };
 		A405FBAE2BA185E1006A5C23 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAD2BA185E1006A5C23 /* SnapshotTesting */; };
@@ -78,6 +79,7 @@
 		A404B0962BA19FCA0068EBED /* AnalyticsEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvents.swift; sourceTree = "<group>"; };
 		A404B0982BA1A0000068EBED /* AnalyticsScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsScreens.swift; sourceTree = "<group>"; };
 		A404B09C2BA1A03F0068EBED /* AnalyticsItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsItems.swift; sourceTree = "<group>"; };
+		A404B09E2BA1A2470068EBED /* AnalyticsKeysForParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsKeysForParams.swift; sourceTree = "<group>"; };
 		A405FBA12BA1858B006A5C23 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A405FBA32BA1858B006A5C23 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
 		A422EBF22B4DB9BC00716981 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -175,11 +177,20 @@
 		A404B09B2BA1A0150068EBED /* AnalyticsEnums */ = {
 			isa = PBXGroup;
 			children = (
+				A404B0A02BA1A2790068EBED /* AnalyticsKeys */,
 				A404B0982BA1A0000068EBED /* AnalyticsScreens.swift */,
 				A404B0962BA19FCA0068EBED /* AnalyticsEvents.swift */,
 				A404B09C2BA1A03F0068EBED /* AnalyticsItems.swift */,
 			);
 			path = AnalyticsEnums;
+			sourceTree = "<group>";
+		};
+		A404B0A02BA1A2790068EBED /* AnalyticsKeys */ = {
+			isa = PBXGroup;
+			children = (
+				A404B09E2BA1A2470068EBED /* AnalyticsKeysForParams.swift */,
+			);
+			path = AnalyticsKeys;
 			sourceTree = "<group>";
 		};
 		A405FBA22BA1858B006A5C23 /* TrackerTests */ = {
@@ -593,6 +604,7 @@
 				A451761B2B665A050036C113 /* Model.xcdatamodeld in Sources */,
 				A451761F2B665CDE0036C113 /* DaysValueTransformer.swift in Sources */,
 				A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */,
+				A404B09F2BA1A2470068EBED /* AnalyticsKeysForParams.swift in Sources */,
 				A422EBF52B4DBC0A00716981 /* StatisticsViewController.swift in Sources */,
 				A4E9D52B2B4FD010002FCDDC /* TrackerRecord.swift in Sources */,
 				A404B0992BA1A0000068EBED /* AnalyticsScreens.swift in Sources */,

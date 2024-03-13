@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum AnalyticsEvents: String {
-    case open
-    case close
-    case click
+enum AnalyticsEvents {
+    static let open = "open"
+    static let close = "close"
+    static let click = "click"
 }

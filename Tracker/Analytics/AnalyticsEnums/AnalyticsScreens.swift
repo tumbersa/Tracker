@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum AnalyticsScreens: String {
-    case Main
+enum AnalyticsScreens {
+    static let main = "Main"
 }
