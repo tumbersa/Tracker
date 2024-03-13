@@ -47,7 +47,7 @@ final class TabBarController: UITabBarController {
         trackerVC.title = trackersStr
         trackerVC.tabBarItem = UITabBarItem(title: trackersStr, image: UIImage(resource: .trTabbarItemTracker), tag: 0)
         
-        let statsVC = StatisticsViewController()
+        let statsVC = StatisticsViewController(viewModel: StatisticsViewModel())
         statsVC.tabBarItem =  UITabBarItem(
             title: NSLocalizedString("statistics", comment: ""),
             image: UIImage(resource: .trTabbarItemStats),

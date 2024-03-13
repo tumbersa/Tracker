@@ -12,6 +12,7 @@
 		A404B0992BA1A0000068EBED /* AnalyticsScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B0982BA1A0000068EBED /* AnalyticsScreens.swift */; };
 		A404B09D2BA1A03F0068EBED /* AnalyticsItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B09C2BA1A03F0068EBED /* AnalyticsItems.swift */; };
 		A404B09F2BA1A2470068EBED /* AnalyticsKeysForParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B09E2BA1A2470068EBED /* AnalyticsKeysForParams.swift */; };
+		A404B0A22BA1AAC80068EBED /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A404B0A12BA1AAC80068EBED /* StatisticsView.swift */; };
 		A405FBA42BA1858B006A5C23 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A405FBA32BA1858B006A5C23 /* TrackerTests.swift */; };
 		A405FBAC2BA185E1006A5C23 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAB2BA185E1006A5C23 /* InlineSnapshotTesting */; };
 		A405FBAE2BA185E1006A5C23 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAD2BA185E1006A5C23 /* SnapshotTesting */; };
@@ -47,6 +48,7 @@
 		A4A05ADC2B5ADDEA00809D16 /* DaysOfWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A05ADB2B5ADDEA00809D16 /* DaysOfWeek.swift */; };
 		A4A05ADE2B5AE0A600809D16 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A05ADD2B5AE0A600809D16 /* MockData.swift */; };
 		A4A111702B625F4E0080B57A /* IconPalleteCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A1116F2B625F4E0080B57A /* IconPalleteCollectionViewCell.swift */; };
+		A4AB61952BA1CCC70015D82C /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB61942BA1CCC70015D82C /* StatisticsViewModel.swift */; };
 		A4BE1E392B6FAB6A00861B42 /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BE1E382B6FAB6A00861B42 /* UIColorMarshalling.swift */; };
 		A4D368202B528FB200BFD1EA /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D3681F2B528FB200BFD1EA /* TrackerCollectionViewCell.swift */; };
 		A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */; };
@@ -80,6 +82,7 @@
 		A404B0982BA1A0000068EBED /* AnalyticsScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsScreens.swift; sourceTree = "<group>"; };
 		A404B09C2BA1A03F0068EBED /* AnalyticsItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsItems.swift; sourceTree = "<group>"; };
 		A404B09E2BA1A2470068EBED /* AnalyticsKeysForParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsKeysForParams.swift; sourceTree = "<group>"; };
+		A404B0A12BA1AAC80068EBED /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		A405FBA12BA1858B006A5C23 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A405FBA32BA1858B006A5C23 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
 		A422EBF22B4DB9BC00716981 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -115,6 +118,7 @@
 		A4A05ADB2B5ADDEA00809D16 /* DaysOfWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysOfWeek.swift; sourceTree = "<group>"; };
 		A4A05ADD2B5AE0A600809D16 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		A4A1116F2B625F4E0080B57A /* IconPalleteCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPalleteCollectionViewCell.swift; sourceTree = "<group>"; };
+		A4AB61942BA1CCC70015D82C /* StatisticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
 		A4BE1E382B6FAB6A00861B42 /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		A4D3681F2B528FB200BFD1EA /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSupplementaryView.swift; sourceTree = "<group>"; };
@@ -293,6 +297,7 @@
 			children = (
 				A4D368212B52A16900BFD1EA /* TrackerSupplementaryView.swift */,
 				A45D26692BA0401B00C46631 /* TRDatePicker.swift */,
+				A404B0A12BA1AAC80068EBED /* StatisticsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -388,6 +393,7 @@
 				A4E792FF2B849D8000196C02 /* TrackersViewModel.swift */,
 				A4E793012B849DA100196C02 /* Binding.swift */,
 				A4D9D4A92B867ED0006AEDED /* CategoriesViewModel.swift */,
+				A4AB61942BA1CCC70015D82C /* StatisticsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -601,6 +607,7 @@
 				A4E793002B849D8000196C02 /* TrackersViewModel.swift in Sources */,
 				A48E70522B74E2D0002F6EEE /* TrackerCategoryStore.swift in Sources */,
 				A4A05ADC2B5ADDEA00809D16 /* DaysOfWeek.swift in Sources */,
+				A4AB61952BA1CCC70015D82C /* StatisticsViewModel.swift in Sources */,
 				A451761B2B665A050036C113 /* Model.xcdatamodeld in Sources */,
 				A451761F2B665CDE0036C113 /* DaysValueTransformer.swift in Sources */,
 				A4D368222B52A16900BFD1EA /* TrackerSupplementaryView.swift in Sources */,
@@ -617,6 +624,7 @@
 				A404B0952BA19C5A0068EBED /* AnalyticsService.swift in Sources */,
 				A422EBF32B4DB9BC00716981 /* TabBarController.swift in Sources */,
 				A4BE1E392B6FAB6A00861B42 /* UIColorMarshalling.swift in Sources */,
+				A404B0A22BA1AAC80068EBED /* StatisticsView.swift in Sources */,
 				A4E0E1742B87B4EB00F92106 /* Notification.Name+Ext.swift in Sources */,
 				A43CDEA82B4C000E002D0064 /* SceneDelegate.swift in Sources */,
 				A45D266A2BA0401B00C46631 /* TRDatePicker.swift in Sources */,

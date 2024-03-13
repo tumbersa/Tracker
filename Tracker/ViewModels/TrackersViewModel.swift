@@ -58,7 +58,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
-        trackerRecordStore: TrackerRecordStore = TrackerRecordStore()
+        trackerRecordStore: TrackerRecordStore = TrackerRecordStore.shared
     ) {
         self.trackerCategoryStore = trackerCategoryStore
         self.trackerRecordStore = trackerRecordStore
@@ -116,8 +116,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private func deleteTrackerRecord(trackerRecord: TrackerRecord) {
         let currentDateString = dateFormatter.string(from: currentDate)
         
-        trackerRecordStore.deleteTrackerRecord(
-            trackerRecord: trackerRecord)
+        trackerRecordStore.deleteTrackerRecord(trackerRecord: trackerRecord)
         completedTrackers.removeAll(where: {$0.id == trackerRecord.id && currentDateString == dateFormatter.string(from: $0.date)})
     }
     
@@ -185,6 +184,9 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     
     func deleteTracker(trackerID: UUID) {
         trackerCategoryStore.deleteTracker(trackerID: trackerID)
+        for i in completedTrackers where i.id == trackerID {
+            deleteTrackerRecord(trackerRecord: i)
+        }
     }
 }
 
