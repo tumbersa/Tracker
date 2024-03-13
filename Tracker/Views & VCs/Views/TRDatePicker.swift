@@ -13,6 +13,7 @@ final class TRDatePicker: UIDatePicker {
     private let patchLabel: UILabel = {
         let patchLabel = UILabel()
         patchLabel.backgroundColor = .trLightGray
+        patchLabel.textColor = .black
         patchLabel.layer.cornerRadius = 8
         patchLabel.clipsToBounds = true
         patchLabel.isUserInteractionEnabled = false

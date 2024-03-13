@@ -51,6 +51,8 @@ final class TrackersViewController: UIViewController {
         return filtersButton
     }()
 
+    private let analyticsService = AnalyticsService()
+    
     init(viewModel: TrackersViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -67,6 +69,15 @@ final class TrackersViewController: UIViewController {
         configureCollectionView()
         configureFiltersButton()
         configureEmptyState(isEmpty: viewModel.visibleTrackerCategories.isEmpty)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
     }
     
     @objc private func actionAddBarItem(){
@@ -117,7 +128,7 @@ final class TrackersViewController: UIViewController {
             barButtonSystemItem: .add,
             target: self,
             action: #selector(actionAddBarItem))
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationItem.leftBarButtonItem?.tintColor = .label
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.set(text: dateFormatter.string(from: currentDate))
@@ -141,12 +152,19 @@ final class TrackersViewController: UIViewController {
         let formattedDate = dateFormatter.string(from: selectedDate)
         viewModel.currentDate = selectedDate
         datePicker.set(text: formattedDate)
+        UIView.animate(withDuration: 0.15) { [weak self] in
+            guard let self else { return }
+            self.filtersButton.layer.opacity = 1
+        }
         
-        viewModel.updateTrackers()
+        if viewModel.curFilter == .byDays {
+            viewModel.updateTrackers()
+        }
     }
     
     private func configureEmptyState(isEmpty: Bool) {
         if isEmpty {
+            
             view.addSubviews(emptyStateImageView, emptyStateLabel)
             
             NSLayoutConstraint.activate([
@@ -161,12 +179,15 @@ final class TrackersViewController: UIViewController {
                 emptyStateLabel.heightAnchor.constraint(equalToConstant: 18)
             ])
         } else {
+            
             emptyStateLabel.removeFromSuperview()
             emptyStateImageView.removeFromSuperview()
         }
     }
     
     private func configureFiltersButton() {
+        filtersButton.addTarget(self, action: #selector(filtersButtonTapped), for: .touchUpInside)
+        
         view.addSubviews(filtersButton)
         
         NSLayoutConstraint.activate([
@@ -175,6 +196,12 @@ final class TrackersViewController: UIViewController {
             filtersButton.widthAnchor.constraint(equalToConstant: 114),
             filtersButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    
+    @objc private func filtersButtonTapped(){
+        guard let viewModelForVC = viewModel as? FilterTrackersViewModelProtocol else { return }
+        let vc = DetailedFiltersViewController(viewModel: viewModelForVC, filter: viewModel.curFilter)
+        present(UINavigationController(rootViewController: vc), animated: true)
     }
 }
 
@@ -319,6 +346,24 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return UIContextMenuConfiguration(actionProvider:  { _ in
             UIMenu(children: [pinAction, editAction, deleteAction])
         })
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.height
+                
+        if offsetY > contentHeight - height {
+            UIView.animate(withDuration: 0.15) { [weak self] in
+                guard let self else { return }
+                self.filtersButton.layer.opacity = 0
+            }
+        } else {
+            UIView.animate(withDuration: 0.15) { [weak self] in
+                guard let self else { return }
+                self.filtersButton.layer.opacity = 1
+            }
+        }
     }
 }
 

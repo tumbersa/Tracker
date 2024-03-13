@@ -7,6 +7,17 @@
 
 import Foundation
 
+enum Filters: Int {
+    case all = 0
+    case byDays = 1
+    case finished = 2
+    case unfinished = 3
+}
+
+protocol FilterTrackersViewModelProtocol {
+    func applyFilter(filterRawValue: Int)
+}
+
 protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     var currentDate: Date { get set }
     var allTrackerCategories: [TrackerCategory] { get }
@@ -15,6 +26,7 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>? { get set }
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>? { get set }
     var pinBinding: Binding<IndexPath>? { get set }
+    var curFilter: Filters { get }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
@@ -42,6 +54,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>?
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
     var pinBinding: Binding<IndexPath>?
+    private(set) var curFilter: Filters = .all
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
@@ -56,7 +69,9 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         
         configureObserver()
         
-        updateTrackers()
+        visibleTrackerCategories = allTrackerCategories.filter{ !$0.trackers.isEmpty }
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
+        //updateTrackers()
         //trackerCategoryStore.clearDB()
         //trackerRecordStore.clearDB()
         //trackerCategoryStore.addNewTrackerCategory(MockData.category)
@@ -93,7 +108,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             }
         }
         
-        allTrackerCategoriesBinding?(allTrackerCategories)
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
     }
     
     
@@ -136,6 +151,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             countDayRecord += 1
         }
         completedTrackersBinding?((isMarked, countDayRecord, someDataForBinding))
+        
     }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker){
@@ -193,5 +209,49 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     
     func updateTracker(category: TrackerCategory) {
         trackerCategoryStore.updateTracker(category: category)
+    }
+}
+
+extension TrackersViewModel: FilterTrackersViewModelProtocol {
+    func applyFilter(filterRawValue: Int) {
+        switch filterRawValue {
+        case Filters.all.rawValue:
+            curFilter = .all
+            visibleTrackerCategories = allTrackerCategories.filter{ !$0.trackers.isEmpty }
+            allTrackerCategoriesBinding?(visibleTrackerCategories)
+        case Filters.byDays.rawValue:
+            curFilter = .byDays
+            updateTrackers()
+        case Filters.finished.rawValue:
+            curFilter = .finished
+            filterFinished(isFinished: true)
+        case Filters.unfinished.rawValue:
+            curFilter = .unfinished
+            filterFinished(isFinished: false)
+        default: break
+        }
+    }
+    
+    private func filterFinished(isFinished: Bool){
+        let setID = Set(completedTrackers.map{ $0.id })
+        var arrCategory: [TrackerCategory] = []
+        var arrTracker: [Tracker] = []
+        allTrackerCategories.forEach { category in
+            arrTracker = []
+            category.trackers.forEach { tracker in
+                if isFinished {
+                    if setID.contains(tracker.id) {
+                        arrTracker.append(tracker)
+                    }
+                } else {
+                    if !setID.contains(tracker.id) {
+                        arrTracker.append(tracker)
+                    }
+                }
+            }
+            arrCategory.append(TrackerCategory(header: category.header, trackers: arrTracker))
+        }
+        visibleTrackerCategories = arrCategory.filter{ !$0.trackers.isEmpty }
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
     }
 }
