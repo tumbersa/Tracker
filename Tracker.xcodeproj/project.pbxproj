@@ -16,6 +16,7 @@
 		A405FBA42BA1858B006A5C23 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A405FBA32BA1858B006A5C23 /* TrackerTests.swift */; };
 		A405FBAC2BA185E1006A5C23 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAB2BA185E1006A5C23 /* InlineSnapshotTesting */; };
 		A405FBAE2BA185E1006A5C23 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A405FBAD2BA185E1006A5C23 /* SnapshotTesting */; };
+		A40A6FB72BA4180900669F87 /* Tracker.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = A40A6FB62BA4180900669F87 /* Tracker.xctestplan */; };
 		A422EBF32B4DB9BC00716981 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBF22B4DB9BC00716981 /* TabBarController.swift */; };
 		A422EBF52B4DBC0A00716981 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBF42B4DBC0A00716981 /* StatisticsViewController.swift */; };
 		A422EBF92B4DC4B800716981 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A422EBF82B4DC4B800716981 /* Tracker.swift */; };
@@ -85,6 +86,7 @@
 		A404B0A12BA1AAC80068EBED /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		A405FBA12BA1858B006A5C23 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A405FBA32BA1858B006A5C23 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
+		A40A6FB62BA4180900669F87 /* Tracker.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Tracker.xctestplan; sourceTree = "<group>"; };
 		A422EBF22B4DB9BC00716981 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A422EBF42B4DBC0A00716981 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		A422EBF82B4DC4B800716981 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 		A405FBA22BA1858B006A5C23 /* TrackerTests */ = {
 			isa = PBXGroup;
 			children = (
+				A40A6FB62BA4180900669F87 /* Tracker.xctestplan */,
 				A405FBA32BA1858B006A5C23 /* TrackerTests.swift */,
 			);
 			path = TrackerTests;
@@ -520,6 +523,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A40A6FB72BA4180900669F87 /* Tracker.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

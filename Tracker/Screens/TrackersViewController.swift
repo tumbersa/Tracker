@@ -51,8 +51,6 @@ final class TrackersViewController: UIViewController {
         filtersButton.setTitle(titleStr, for: .normal)
         return filtersButton
     }()
-
-    private let analyticsService = AnalyticsService()
     
     init(viewModel: TrackersViewModelProtocol) {
         self.viewModel = viewModel
@@ -74,12 +72,12 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        analyticsService.report(event: AnalyticsEvents.open, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
+           AnalyticsService.report(event: AnalyticsEvents.open, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        analyticsService.report(event: AnalyticsEvents.close, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
+        AnalyticsService.report(event: AnalyticsEvents.close, params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main])
 
     }
     
@@ -87,7 +85,7 @@ final class TrackersViewController: UIViewController {
         let vcToShow = ModalChoiceViewController()
         vcToShow.delegate = self
         present(UINavigationController(rootViewController: vcToShow), animated: true)
-        analyticsService.report(event: AnalyticsEvents.click,
+        AnalyticsService.report(event: AnalyticsEvents.click,
                                 params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
                                          AnalyticsKeysForParams.item : AnalyticsItems.addTrack])
     }
@@ -163,6 +161,8 @@ final class TrackersViewController: UIViewController {
         
         if viewModel.curFilter == .byDays {
             viewModel.updateTrackers()
+        } else {
+            viewModel.allTrackerCategoriesBinding?(viewModel.visibleTrackerCategories)
         }
     }
     
@@ -206,7 +206,7 @@ final class TrackersViewController: UIViewController {
         let vc = DetailedFiltersViewController(viewModel: viewModelForVC, filter: viewModel.curFilter)
         present(UINavigationController(rootViewController: vc), animated: true)
         
-        analyticsService.report(event: AnalyticsEvents.click,
+        AnalyticsService.report(event: AnalyticsEvents.click,
                                 params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
                                          AnalyticsKeysForParams.item : AnalyticsItems.filter])
     }
@@ -331,7 +331,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             vc.delegate = viewModel
             present(UINavigationController(rootViewController: vc), animated: true)
             
-            analyticsService.report(event: AnalyticsEvents.click,
+            AnalyticsService.report(event: AnalyticsEvents.click,
                                     params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
                                              AnalyticsKeysForParams.item : AnalyticsItems.edit])
         }
@@ -356,7 +356,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             alert.addAction(cancelAlertAction)
             present(alert, animated: true)
             
-            analyticsService.report(event: AnalyticsEvents.click,
+            AnalyticsService.report(event: AnalyticsEvents.click,
                                     params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
                                              AnalyticsKeysForParams.item : AnalyticsItems.delete])
         }
@@ -398,7 +398,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             viewModel.plusButtonTapped(someDataForBinding: cell, indexPath: indexPath)
         }
         
-        analyticsService.report(event: AnalyticsEvents.click,
+        AnalyticsService.report(event: AnalyticsEvents.click,
                                 params: [AnalyticsKeysForParams.screen : AnalyticsScreens.main,
                                          AnalyticsKeysForParams.item : AnalyticsItems.track])
     }

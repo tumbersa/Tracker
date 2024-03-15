@@ -16,7 +16,7 @@ struct AnalyticsService {
         }
     }
     
-    func report(event: String, params : [AnyHashable : Any]) {
+    static func report(event: String, params : [AnyHashable : Any]) {
         AppMetrica.reportEvent(name: event, parameters: params, onFailure: { error in
             print("DID FAIL REPORT EVENT: %@", event)
             print("REPORT ERROR: %@", error.localizedDescription)

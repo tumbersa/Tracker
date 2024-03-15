@@ -45,7 +45,7 @@ final class StatisticsViewModel: StatisticsViewModelProtocol {
         if trackers.isEmpty {
             completedTrackersBinding?((true, nil))
         } else {
-            let countOfFinishedTrackers = Set(completedTrackers.map{ $0.id }).count
+            let countOfFinishedTrackers = completedTrackers.count
             completedTrackersBinding?((false, countOfFinishedTrackers))
         }
     }
