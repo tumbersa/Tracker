@@ -36,6 +36,8 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath)
     func unpinTracker(trackerID: UUID, indexPath: IndexPath)
     func deleteTracker(trackerID: UUID)
+    
+    func updateSearchResults(for text: String)
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
@@ -55,6 +57,9 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
     var pinBinding: Binding<IndexPath>?
     private(set) var curFilter: Filters = .all
+    
+    private var visibleCategoriesBackup: [TrackerCategory] = []
+    private var prevSearchedText = ""
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
@@ -211,6 +216,33 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     
     func updateTracker(category: TrackerCategory) {
         trackerCategoryStore.updateTracker(category: category)
+    }
+    
+    func updateSearchResults(for text: String) {
+        var visibleNames: [String] = []
+        visibleTrackerCategories.forEach { visibleCategory in
+            visibleNames.append(contentsOf: visibleCategory.trackers.map{ $0.name })
+        }
+        print(visibleNames)
+        
+        if text.isEmpty {
+            if prevSearchedText.isEmpty {
+                visibleCategoriesBackup = visibleTrackerCategories
+            } else {
+                visibleTrackerCategories = visibleCategoriesBackup
+            }
+            
+        } else {
+            var visibleCategoriesBackupForSearch = visibleCategoriesBackup
+            for (index,category) in visibleCategoriesBackupForSearch.enumerated() {
+                
+                let searchedTrackers = category.trackers.filter{ $0.name.lowercased().contains(text.lowercased()) }
+                visibleCategoriesBackupForSearch[index] = TrackerCategory(header: category.header, trackers: searchedTrackers)
+            }
+            visibleTrackerCategories = visibleCategoriesBackupForSearch.filter{ !$0.trackers.isEmpty}
+        }
+        prevSearchedText = text
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
     }
 }
 

@@ -52,6 +52,14 @@ final class TrackersViewController: UIViewController {
         return filtersButton
     }()
     
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.placeholder = NSLocalizedString("search", comment: "")
+        navigationItem.searchController = searchController
+        return searchController
+    }()
+    
     init(viewModel: TrackersViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -136,6 +144,8 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.set(text: dateFormatter.string(from: currentDate))
+        
+        navigationItem.searchController = searchController
     }
     
     private func configureCollectionView(){
@@ -415,3 +425,10 @@ extension TrackersViewController: ModalChoiceVCDelegate {
     }
 }
 
+extension TrackersViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let text = searchController.searchBar.text{
+            viewModel.updateSearchResults(for: text)
+        }
+    }
+}

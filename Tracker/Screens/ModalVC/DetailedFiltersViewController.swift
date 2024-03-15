@@ -40,7 +40,7 @@ final class DetailedFiltersViewController: UIViewController {
     private func configureVC(){
         view.backgroundColor = .systemBackground
         
-        title = NSLocalizedString("Filters", comment: "")
+        title = NSLocalizedString("filters", comment: "")
     }
     
     private func configureTableView() {
