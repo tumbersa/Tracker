@@ -15,44 +15,25 @@ enum DaysOfWeek: Int, Codable {
     case thursday = 5
     case friday = 6
     case saturday = 7
-
-    static func printDaysMessage(_ days: Int) -> String {
-        
-        if days == 0 {
-            return "0 дней"
-        } else if days == 1 {
-            return "1 день"
-        } else if days >= 2 && days <= 4 {
-            return "\(days) дня"
-        } else if days >= 5 && days <= 20 {
-            return "\(days) дней"
-        } else if days % 10 == 1 {
-            return "\(days) день"
-        } else if days % 10 >= 2 && days % 10 <= 4 {
-            return "\(days) дня"
-        } else {
-            return "\(days) дней"
-        }
-    }
     
     static func getShortenedDays(days: [DaysOfWeek]) -> String {
         var returnString = ""
         for index in days.indices {
             switch days[index] {
             case .monday:
-                returnString += "Пн"
+                returnString += NSLocalizedString("mondayAbbreviation", comment: "")
             case .tuesday:
-                returnString += "Вт"
+                returnString += NSLocalizedString("tuesdayAbbreviation", comment: "")
             case .wednesday:
-                returnString += "Ср"
+                returnString += NSLocalizedString("wednesdayAbbreviation", comment: "")
             case .thursday:
-                returnString += "Чт"
+                returnString += NSLocalizedString("thursdayAbbreviation", comment: "")
             case .friday:
-                returnString += "Пт"
+                returnString += NSLocalizedString("fridayAbbreviation", comment: "")
             case .saturday:
-                returnString += "Сб"
+                returnString += NSLocalizedString("saturdayAbbreviation", comment: "")
             case .sunday:
-                returnString += "Вс"
+                returnString += NSLocalizedString("sundayAbbreviation", comment: "")
             }
             if index != days.count - 1 {
                 returnString += ", "

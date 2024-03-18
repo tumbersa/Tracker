@@ -11,7 +11,7 @@ class IconPaletteColorCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "IconPalleteColorCell"
     
-    private let colorView = UIView()
+    private lazy var colorView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

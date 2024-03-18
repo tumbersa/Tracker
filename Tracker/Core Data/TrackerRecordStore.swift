@@ -9,30 +9,20 @@ import UIKit
 import CoreData
 
 final class TrackerRecordStore: NSObject {
+    
+    static let shared = TrackerRecordStore()
+    
     private let context: NSManagedObjectContext
     private let dateFormatter = DateFormatter()
     
-    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData> = {
-        let request = TrackerRecordCoreData.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
-        request.returnsObjectsAsFaults = false
-        let fetchedResultsController = NSFetchedResultsController(
-            fetchRequest: request,
-            managedObjectContext: context,
-            sectionNameKeyPath: nil, cacheName: nil)
-        
-        try? fetchedResultsController.performFetch()
-        
-        return fetchedResultsController
-    }()
-    
-    override init(){
+    private override init(){
         context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         dateFormatter.dateFormat = "dd.MM.yy"
     }
     
     var trackerRecords: [TrackerRecord] {
-        let objects = (fetchedResultsController.fetchedObjects) ?? []
+        let request = TrackerRecordCoreData.fetchRequest()
+        var objects: [TrackerRecordCoreData] = (try? context.fetch(request)) ?? []
         var trackerRecords: [TrackerRecord] = []
         objects.forEach {
             if let id = $0.id, let date = $0.date {

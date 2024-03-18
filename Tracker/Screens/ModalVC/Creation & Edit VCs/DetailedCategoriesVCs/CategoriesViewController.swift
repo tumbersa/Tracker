@@ -23,7 +23,7 @@ final class CategoriesViewController: UIViewController {
     private lazy var emptyStateLabel: UILabel = {
         let emptyStateLabel = UILabel()
         emptyStateLabel.numberOfLines = 2
-        emptyStateLabel.text = "Привычки и события можно \nобъединить по смыслу"
+        emptyStateLabel.text = NSLocalizedString("categories.EmptyState.title", comment: "")
         emptyStateLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         emptyStateLabel.textAlignment = .center
         return emptyStateLabel
@@ -33,7 +33,7 @@ final class CategoriesViewController: UIViewController {
         let addCategoryButton = UIButton()
         addCategoryButton.backgroundColor = .trBlack
         addCategoryButton.layer.cornerRadius = 16
-        addCategoryButton.setTitle("Добавить категорию", for: .normal)
+        addCategoryButton.setTitle(NSLocalizedString("addCategory", comment: ""), for: .normal)
         addCategoryButton.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
         return addCategoryButton
     }()
@@ -162,7 +162,7 @@ final class CategoriesViewController: UIViewController {
         navigationItem.setHidesBackButton(true, animated: true)
         navigationController?.navigationBar.titleTextAttributes =
         [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Категория"
+        title = NSLocalizedString("category", comment: "")
         
     }
     
@@ -256,21 +256,26 @@ extension CategoriesViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
-        let attributedTitle = NSAttributedString(string: "Удалить", attributes: redColorAttribute)
+        let deleteStr = NSLocalizedString("delete", comment: "")
         
-        let deleteAction =  UIAction(title: "Удалить") {[weak self] _ in
+        let redColorAttribute: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.red]
+        let attributedTitle = NSAttributedString(string: deleteStr, attributes: redColorAttribute)
+        
+        let deleteAction =  UIAction(title: deleteStr) {[weak self] _ in
             guard let self else { return }
             let cell = tableView.cellForRow(at: indexPath)
             cell?.accessoryType = .checkmark
-            let alert = UIAlertController(title: nil, message: "Эта категория точно не нужна? Все её трекеры удалятся", preferredStyle: .actionSheet)
+            let alert = UIAlertController(
+                title: nil,
+                message: NSLocalizedString("categories.alert.title", comment: ""),
+                preferredStyle: .actionSheet)
             
-            let deleteAlertAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            let deleteAlertAction = UIAlertAction(title: deleteStr, style: .destructive) { [weak self] _ in
                 guard let self else { return }
                 viewModel.deleteTrackerCategory(headerTrackerCategory: cell?.textLabel?.text ?? "")
             }
             
-            let cancelAlertAction = UIAlertAction(title: "Отменить", style: .cancel) {_ in
+            let cancelAlertAction = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) {_ in
                 cell?.accessoryType = .none
             }
             
@@ -280,7 +285,7 @@ extension CategoriesViewController: UITableViewDelegate {
         }
         deleteAction.setValue(attributedTitle, forKey: "attributedTitle")
         
-        let editAction =  UIAction(title: "Редактировать") {[weak self] _ in
+        let editAction =  UIAction(title: NSLocalizedString("edit", comment: "")) {[weak self] _ in
             guard let self else { return }
             let cell = tableView.cellForRow(at: indexPath)
             

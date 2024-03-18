@@ -7,6 +7,17 @@
 
 import Foundation
 
+enum Filters: Int {
+    case all = 0
+    case byDays = 1
+    case finished = 2
+    case unfinished = 3
+}
+
+protocol FilterTrackersViewModelProtocol {
+    func applyFilter(filterRawValue: Int)
+}
+
 protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     var currentDate: Date { get set }
     var allTrackerCategories: [TrackerCategory] { get }
@@ -14,30 +25,45 @@ protocol TrackersViewModelProtocol: ModalCreationTrackerVCDelegate {
     
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>? { get set }
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>? { get set }
+    var pinBinding: Binding<IndexPath>? { get set }
+    var curFilter: Filters { get }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker)
     func plusButtonTapped(someDataForBinding: SomeData, indexPath: IndexPath)
     func updateTrackers()
+    func getRecordCount(id: UUID) -> Int 
+    
+    func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath)
+    func unpinTracker(trackerID: UUID, indexPath: IndexPath)
+    func deleteTracker(trackerID: UUID)
+    
+    func updateSearchResults(for text: String)
 }
 
 final class TrackersViewModel: TrackersViewModelProtocol {
     private let dateFormatter = DateFormatter()
     var currentDate: Date = Date()
+    private var indexPathForPin: IndexPath = IndexPath()
     
-    private var observer: NSObjectProtocol?
     private let trackerCategoryStore: TrackerCategoryStore
     private let trackerRecordStore: TrackerRecordStore
     
+    private var pinnedTrackersID: [UUID] = []
     private (set) var allTrackerCategories: [TrackerCategory]
     private (set) var visibleTrackerCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord]
     
     var allTrackerCategoriesBinding: Binding<[TrackerCategory]>?
     var completedTrackersBinding: Binding<(Bool, Int, SomeData)>?
+    var pinBinding: Binding<IndexPath>?
+    private(set) var curFilter: Filters = .all
+    
+    private var visibleCategoriesBackup: [TrackerCategory] = []
+    private var prevSearchedText = ""
     
     init(
         trackerCategoryStore: TrackerCategoryStore = TrackerCategoryStore.shared,
-        trackerRecordStore: TrackerRecordStore = TrackerRecordStore()
+        trackerRecordStore: TrackerRecordStore = TrackerRecordStore.shared
     ) {
         self.trackerCategoryStore = trackerCategoryStore
         self.trackerRecordStore = trackerRecordStore
@@ -48,22 +74,27 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         
         configureObserver()
         
-        updateTrackers()
+        visibleTrackerCategories = allTrackerCategories.filter{ !$0.trackers.isEmpty }
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
+        //updateTrackers()
         //trackerCategoryStore.clearDB()
         //trackerRecordStore.clearDB()
         //trackerCategoryStore.addNewTrackerCategory(MockData.category)
     }
     
     private func configureObserver(){
-        observer = NotificationCenter.default.addObserver(
+        NotificationCenter.default.addObserver(
             forName: NSNotification.Name.didChangeTrackers,
             object: nil, queue: .main) { [weak self] notification in
                 guard let self else { return }
                 if let dict = notification.userInfo as? [String : TrackerUpdateType],
                    let type = dict["Type"],
                    !(type == .insert) {
+                    if type == .updateIsPinned {
+                        pinBinding?(indexPathForPin)
+                    }
                     allTrackerCategories = trackerCategoryStore.categories
-                    self.updateTrackers()
+                    updateTrackers()
                 }
             }
     }
@@ -82,7 +113,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             }
         }
         
-        allTrackerCategoriesBinding?(allTrackerCategories)
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
     }
     
     
@@ -90,8 +121,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
     private func deleteTrackerRecord(trackerRecord: TrackerRecord) {
         let currentDateString = dateFormatter.string(from: currentDate)
         
-        trackerRecordStore.deleteTrackerRecord(
-            trackerRecord: trackerRecord)
+        trackerRecordStore.deleteTrackerRecord(trackerRecord: trackerRecord)
         completedTrackers.removeAll(where: {$0.id == trackerRecord.id && currentDateString == dateFormatter.string(from: $0.date)})
     }
     
@@ -125,6 +155,7 @@ final class TrackersViewModel: TrackersViewModelProtocol {
             countDayRecord += 1
         }
         completedTrackersBinding?((isMarked, countDayRecord, someDataForBinding))
+        
     }
     
     func setInitialStateButton(someDataForBinding: SomeData, trackerItem: Tracker){
@@ -141,12 +172,31 @@ final class TrackersViewModel: TrackersViewModelProtocol {
         
         completedTrackersBinding?((!isMarked, countDayRecord, someDataForBinding))
     }
+    
+    func pinTracker(trackerID: UUID, nameCategory: String, indexPath: IndexPath) {
+        indexPathForPin = indexPath
+        trackerCategoryStore.pinTracker(trackerID: trackerID, nameCategory: nameCategory)
+    }
+    
+    func unpinTracker(trackerID: UUID, indexPath: IndexPath){
+        indexPathForPin = indexPath
+        trackerCategoryStore.unpinTracker(trackerID: trackerID)
+    }
+    
+    func getRecordCount(id: UUID) -> Int {
+        completedTrackers.filter{ $0.id == id }.count
+    }
+    
+    func deleteTracker(trackerID: UUID) {
+        trackerCategoryStore.deleteTracker(trackerID: trackerID)
+        for i in completedTrackers where i.id == trackerID {
+            deleteTrackerRecord(trackerRecord: i)
+        }
+    }
 }
 
 extension TrackersViewModel: ModalCreationTrackerVCDelegate {
     func createTracker(category: TrackerCategory) {
-        
-        NotificationCenter.default.removeObserver(observer as Any)
         
         var trackers: [Tracker] = []
         allTrackerCategories = trackerCategoryStore.categories
@@ -162,7 +212,80 @@ extension TrackersViewModel: ModalCreationTrackerVCDelegate {
             }
         }
         updateTrackers()
+    }
+    
+    func updateTracker(category: TrackerCategory) {
+        trackerCategoryStore.updateTracker(category: category)
+    }
+    
+    func updateSearchResults(for text: String) {
+        var visibleNames: [String] = []
+        visibleTrackerCategories.forEach { visibleCategory in
+            visibleNames.append(contentsOf: visibleCategory.trackers.map{ $0.name })
+        }
+        print(visibleNames)
         
-        configureObserver()
+        if text.isEmpty {
+            if prevSearchedText.isEmpty {
+                visibleCategoriesBackup = visibleTrackerCategories
+            } else {
+                visibleTrackerCategories = visibleCategoriesBackup
+            }
+            
+        } else {
+            var visibleCategoriesBackupForSearch = visibleCategoriesBackup
+            for (index,category) in visibleCategoriesBackupForSearch.enumerated() {
+                
+                let searchedTrackers = category.trackers.filter{ $0.name.lowercased().contains(text.lowercased()) }
+                visibleCategoriesBackupForSearch[index] = TrackerCategory(header: category.header, trackers: searchedTrackers)
+            }
+            visibleTrackerCategories = visibleCategoriesBackupForSearch.filter{ !$0.trackers.isEmpty}
+        }
+        prevSearchedText = text
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
+    }
+}
+
+extension TrackersViewModel: FilterTrackersViewModelProtocol {
+    func applyFilter(filterRawValue: Int) {
+        switch filterRawValue {
+        case Filters.all.rawValue:
+            curFilter = .all
+            visibleTrackerCategories = allTrackerCategories.filter{ !$0.trackers.isEmpty }
+            allTrackerCategoriesBinding?(visibleTrackerCategories)
+        case Filters.byDays.rawValue:
+            curFilter = .byDays
+            updateTrackers()
+        case Filters.finished.rawValue:
+            curFilter = .finished
+            filterFinished(isFinished: true)
+        case Filters.unfinished.rawValue:
+            curFilter = .unfinished
+            filterFinished(isFinished: false)
+        default: break
+        }
+    }
+    
+    private func filterFinished(isFinished: Bool){
+        let setID = Set(completedTrackers.map{ $0.id })
+        var arrCategory: [TrackerCategory] = []
+        var arrTracker: [Tracker] = []
+        allTrackerCategories.forEach { category in
+            arrTracker = []
+            category.trackers.forEach { tracker in
+                if isFinished {
+                    if setID.contains(tracker.id) {
+                        arrTracker.append(tracker)
+                    }
+                } else {
+                    if !setID.contains(tracker.id) {
+                        arrTracker.append(tracker)
+                    }
+                }
+            }
+            arrCategory.append(TrackerCategory(header: category.header, trackers: arrTracker))
+        }
+        visibleTrackerCategories = arrCategory.filter{ !$0.trackers.isEmpty }
+        allTrackerCategoriesBinding?(visibleTrackerCategories)
     }
 }

@@ -16,7 +16,7 @@ final class ModalChoiceViewController: UIViewController {
     private let habitButton: UIButton = {
         let habitButton = UIButton()
         habitButton.backgroundColor = UIColor(resource: .trBlack)
-        habitButton.setTitle("Привычка", for: .normal)
+        habitButton.setTitle(NSLocalizedString("habit", comment: ""), for: .normal)
         habitButton.layer.cornerRadius = 16
         return habitButton
     }()
@@ -24,7 +24,7 @@ final class ModalChoiceViewController: UIViewController {
     private let irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
         irregularEventButton.backgroundColor = UIColor(resource: .trBlack)
-        irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
+        irregularEventButton.setTitle(NSLocalizedString("irregularEvent", comment: ""), for: .normal)
         irregularEventButton.layer.cornerRadius = 16
         return irregularEventButton
     }()
@@ -40,7 +40,7 @@ final class ModalChoiceViewController: UIViewController {
     
     private func configure() {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Создание трекера"
+        title = NSLocalizedString("creatingTracker", comment: "")
         
         habitButton.addTarget(self, action: #selector(habitButtonTapped), for: .touchUpInside)
         irregularEventButton.addTarget(self, action: #selector(irregularEventButtonTapped), for: .touchUpInside)

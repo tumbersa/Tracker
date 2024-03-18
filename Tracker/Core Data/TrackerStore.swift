@@ -13,6 +13,7 @@ import UIKit
 protocol TrackerCategoryStoreMapper {
     func trackerCoreData(from tracker: Tracker, context: NSManagedObjectContext) -> TrackerCoreData
     func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker
+    func updateExistingTracker(oldTrackerCD: TrackerCoreData, newTrackerCD: TrackerCoreData)
 }
 
 enum TrackerStoreError: Error {
@@ -60,6 +61,7 @@ final class TrackerStore: NSObject {
     }
     
 
+    
 }
 
 extension TrackerStore: TrackerCategoryStoreMapper {
@@ -82,5 +84,12 @@ extension TrackerStore: TrackerCategoryStoreMapper {
         let color = UIColorMarshalling.hexToUIColor(hex: hexColor)
         
         return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: schedule)
+    }
+    
+    func updateExistingTracker(oldTrackerCD: TrackerCoreData, newTrackerCD: TrackerCoreData) {
+        oldTrackerCD.name = newTrackerCD.name
+        oldTrackerCD.emoji = newTrackerCD.emoji
+        oldTrackerCD.colorHex = newTrackerCD.colorHex
+        oldTrackerCD.schedule = newTrackerCD.schedule
     }
 }

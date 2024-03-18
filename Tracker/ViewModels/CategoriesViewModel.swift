@@ -63,6 +63,7 @@ extension CategoriesViewModel: TrackerCategoryStoreDelegate {
             insertOrEditCategoryBinding?(update)
         case .delete:
             deleteCategoryBinding?(update)
+        default: break
         }
     }
     
